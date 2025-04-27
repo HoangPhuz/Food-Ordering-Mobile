@@ -33,6 +33,8 @@
         app:endIconTint="@color/black"
         app:layout_constraintTop_toBottomOf="@+id/textView10">
 
+
+
         <AutoCompleteTextView
             android:id="@+id/listOfLocation"
             android:layout_width="match_parent"
