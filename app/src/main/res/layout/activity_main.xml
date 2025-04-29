@@ -24,6 +24,8 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:text="Khám phá món ăn yêu thích"
+        android:textColor="@color/black"
+        android:fontFamily="@font/patrick_hand"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
