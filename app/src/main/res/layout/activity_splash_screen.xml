@@ -24,7 +24,7 @@
         android:fontFamily="@font/patrick_hand"
         android:gravity="center"
         android:text="Làn sóng đồ ăn"
-        android:textColor="@color/black"
+        android:textColor="@color/textColor"
         android:textSize="40sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/imageView"
