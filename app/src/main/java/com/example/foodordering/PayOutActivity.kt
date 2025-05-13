@@ -1,10 +1,13 @@
 package com.example.foodordering
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.foodordering.Fragment.CartFragment
 import com.example.foodordering.databinding.ActivityPayOutBinding
 
 class PayOutActivity : AppCompatActivity() {
@@ -17,5 +20,10 @@ class PayOutActivity : AppCompatActivity() {
             val bottomSheetDialog = CongratsBottomSheet()
             bottomSheetDialog.show(supportFragmentManager, "Test")
         }
+        binding.buttonBack.setOnClickListener {
+            finish()
+        }
     }
+
+
 }
