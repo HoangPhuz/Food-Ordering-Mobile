@@ -35,7 +35,7 @@
             android:fontFamily="@font/patrick_hand"
             android:text="Sửa"
             android:textColor="@color/textColor"
-            android:textSize="20sp"
+            android:textSize="35sp"
             android:layout_marginTop="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -60,7 +60,10 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/patrick_hand"
                 android:paddingLeft="8dp"
-                android:text="Tên" />
+                android:text="Tên"
+                android:textColor="@color/black"
+                android:textSize="20sp"
+                />
 
             <EditText
                 android:layout_width="wrap_content"
@@ -92,7 +95,9 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/patrick_hand"
                 android:paddingLeft="8dp"
-                android:text="Địa chỉ" />
+                android:text="Địa chỉ"
+                android:textColor="@color/black"
+                android:textSize="20sp"/>
 
             <EditText
                 android:layout_width="wrap_content"
@@ -126,7 +131,9 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/patrick_hand"
                 android:paddingLeft="8dp"
-                android:text="Số Điện Thoại" />
+                android:text="SĐT"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
 
             <EditText
                 android:layout_width="wrap_content"
@@ -153,12 +160,14 @@
             app:layout_constraintTop_toBottomOf="@+id/textView27">
 
             <TextView
-                android:layout_width="150dp"
+                android:layout_width="230dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:fontFamily="@font/patrick_hand"
                 android:paddingLeft="8dp"
-                android:text="Phương thức thanh toán" />
+                android:text="Phương thức thanh toán"
+                android:textColor="@color/black"
+                android:textSize="20sp"/>
 
             <ImageView
                 android:id="@+id/imageView5"
@@ -189,7 +198,10 @@
                 android:layout_weight="1"
                 android:fontFamily="@font/patrick_hand"
                 android:paddingLeft="8dp"
-                android:text="Tổng tiền" />
+                android:text="Tổng tiền"
+                android:textColor="@color/black"
+                android:textSize="20sp">
+            </TextView>
 
             <EditText
                 android:layout_width="wrap_content"
@@ -203,7 +215,9 @@
                 android:paddingEnd="32dp"
                 android:text="500.000 vnđ"
                 android:textColor="@color/textColor"
-                android:textSize="20sp" />
+                android:textSize="20sp">
+            </EditText>
+
         </LinearLayout>
     </LinearLayout>
 
@@ -219,7 +233,8 @@
         android:fontFamily="@font/patrick_hand"
         android:text="Đặt hàng"
         android:textAllCaps="false"
-        android:textColor="@color/textColor" />
+        android:textColor="@color/textColor"
+        android:textSize="20sp"/>
 
 
 </FrameLayout>

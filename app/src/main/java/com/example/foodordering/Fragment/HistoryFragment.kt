@@ -11,16 +11,7 @@ import com.example.foodordering.R
 import com.example.foodordering.databinding.BuyAgainItemBinding
 import com.example.foodordering.databinding.FragmentHistoryBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [HistoryFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class HistoryFragment : Fragment() {
     private lateinit var binding: FragmentHistoryBinding
     private lateinit var buyAgainAdapter: BuyAgainAdapter

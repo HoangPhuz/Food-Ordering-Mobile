@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.foodordering.databinding.CartItemBinding
 
 class CartAdapter(private val cartItems: MutableList<String>, private val cartItemPrices: MutableList<String>, private val cartImage: MutableList<Int>): RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
-
+        
     private val itemQuantities = MutableList(cartItems.size) { 1 }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {

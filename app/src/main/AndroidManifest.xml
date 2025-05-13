@@ -32,7 +32,9 @@
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="false" />
+            android:exported="true"
+            >
+        </activity>
         <activity
             android:name=".MainActivity"
             android:exported="true"

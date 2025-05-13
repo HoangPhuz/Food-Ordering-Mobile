@@ -34,10 +34,12 @@
         android:layout_width="325dp"
         android:layout_height="57dp"
         android:layout_marginBottom="8dp"
-        android:background="@drawable/textviewshape"
+        android:background="@drawable/edittextshape"
         android:fontFamily="@font/patrick_hand"
         android:text="Tiếp tục"
         android:textAllCaps="false"
+        android:textColor="@color/textColor"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
