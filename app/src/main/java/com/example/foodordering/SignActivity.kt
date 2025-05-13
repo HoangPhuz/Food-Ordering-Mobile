@@ -99,7 +99,7 @@ class SignActivity : AppCompatActivity() {
                         auth.signInWithCredential(credential).addOnCompleteListener { authTask ->
                             if (authTask.isSuccessful) {
                                 // Lưu thông tin người dùng từ Google vào Database
-                                saveGoogleUserToDatabase(account)
+                                //saveGoogleUserToDatabase(account)
                                 Toast.makeText(this, "Đăng nhập Google thành công", Toast.LENGTH_SHORT).show()
                                 startActivity(Intent(this, MainActivity::class.java))
                                 finish()
