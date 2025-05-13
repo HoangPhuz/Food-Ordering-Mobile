@@ -124,7 +124,7 @@ class LoginActivity : AppCompatActivity() {
     private fun createUser() {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener{ task ->
             if(task.isSuccessful) {
-                val user: FirebaseUser? = auth.currentUser
+                val user= auth.currentUser
                 updateUI(user)
             }
             else{
