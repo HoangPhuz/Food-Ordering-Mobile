@@ -74,12 +74,12 @@ class CartFragment : Fragment() {
                     //Lấy mặt hàng trong giỏ hàng
                     val orderItems = foodSnapshot.getValue(CartItems::class.java)
                     //Thêm thông tin mặt hàng vào danh sách
-                    orderItems?.foodName?.let { foodNames.add(it) }
-                    orderItems?.foodPrice?.let { foodPrices.add(it) }
-                    orderItems?.foodDescription?.let { foodDescriptions.add(it) }
-                    orderItems?.foodImage?.let { foodImagesUri.add(it) }
-                    orderItems?.foodIngredient?.let { foodIngredients.add(it) }
-                    orderItems?.foodQuantity?.let { foodQuantity.add(it) }
+                    orderItems?.foodName?.let { foodName.add(it) }
+                    orderItems?.foodPrice?.let { foodPrice.add(it) }
+                    orderItems?.foodDescription?.let { foodDescription.add(it) }
+                    orderItems?.foodImage?.let { foodImage.add(it) }
+                    orderItems?.foodIngredient?.let { foodIngredient.add(it) }
+                    orderItems?.foodQuantity?.let { foodQuantities.add(it) }
                 }
                 orderNow(foodName, foodPrice, foodImage, foodDescription, foodIngredient, foodQuantities)
             }
