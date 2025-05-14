@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FoodOrdering</string>
+    <string name="tiep_theo">Tiếp theo</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+<!--    <string name="default_web_client_id">988069574835-k6j1cqqlpm71v3tjgh27uv63bmcmm887.apps.googleusercontent.com</string>-->
+</resources>

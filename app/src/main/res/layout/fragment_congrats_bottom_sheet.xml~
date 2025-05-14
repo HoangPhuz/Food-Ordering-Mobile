@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context=".CongratsBottomSheet">
+
+    <!-- TODO: Update blank fragment layout -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="32dp"
+            android:fontFamily="@font/patrick_hand"
+            android:text="@string/hello_blank_fragment"
+            android:textAlignment="center"
+            android:textColor="@color/textColor"
+            android:textSize="34sp"
+            tools:text="Chúc mừng\n đặt đơn hàng thành công" />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="32dp"
+            android:src="@drawable/congratulation" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:background="@drawable/gohomeshape"
+            android:id="@+id/goHome"
+            android:textAllCaps="false"
+            android:layout_gravity="center"
+            android:layout_width="157dp"
+            android:layout_height="57dp"
+            android:layout_marginTop="32dp"
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:fontFamily="@font/patrick_hand"
+            android:text="Về trang chủ" />
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+    </LinearLayout>
+
+</FrameLayout>
