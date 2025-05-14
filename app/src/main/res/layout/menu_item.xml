@@ -60,9 +60,9 @@
                 android:text="10.000đ"
                 android:textColor="@color/textColor"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.692"
-                app:layout_constraintStart_toEndOf="@+id/menuFoodName"
+                app:layout_constraintEnd_toEndOf="@+id/menuAddToCart"
+                app:layout_constraintHorizontal_bias="0.6"
+                app:layout_constraintStart_toStartOf="@+id/menuAddToCart"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -75,11 +75,11 @@
                 android:text="Thêm vào giỏ hàng"
                 android:textColor="@color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="@+id/menuPrice"
-                app:layout_constraintHorizontal_bias="0.425"
-                app:layout_constraintStart_toStartOf="@+id/menuPrice"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.865"
+                app:layout_constraintStart_toEndOf="@+id/menuImage"
                 app:layout_constraintTop_toBottomOf="@+id/menuPrice"
-                app:layout_constraintVertical_bias="0.384" />
+                app:layout_constraintVertical_bias="0.238" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.cardview.widget.CardView>

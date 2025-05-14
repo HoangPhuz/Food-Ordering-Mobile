@@ -74,7 +74,7 @@
                 android:ems="10"
                 android:fontFamily="@font/lato"
                 android:inputType="text"
-                android:text="Nông Văn Dân" />
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
@@ -111,7 +111,7 @@
                 android:ems="10"
                 android:fontFamily="@font/lato"
                 android:inputType="textMultiLine"
-                android:text="Lorem ipsum dolor sit amet, aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut a" />
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
@@ -146,7 +146,7 @@
                 android:ems="10"
                 android:fontFamily="@font/lato"
                 android:inputType="phone"
-                android:text="32141239" />
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
@@ -217,7 +217,7 @@
                 android:gravity="end"
                 android:inputType="none"
                 android:paddingEnd="32dp"
-                android:text="500.000 vnđ"
+                android:text=""
                 android:textColor="@color/textColor"
                 android:textSize="20sp"></EditText>
 

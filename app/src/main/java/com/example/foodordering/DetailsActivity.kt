@@ -56,15 +56,20 @@ class DetailsActivity : AppCompatActivity() {
         val database = FirebaseDatabase.getInstance().reference
         val userId = auth.currentUser?.uid ?: ""
         //Tạo đối tượng cartItems
-        val cartItem = CartItems(foodName.toString(),foodImage.toString(),foodPrice.toString()
-            ,foodDescription.toString(),foodIngredients.toString(), 1)
+        val cartItem = CartItems(
+            foodName = foodName.toString(),
+            foodImage = foodImage.toString(),
+            foodPrice = foodPrice.toString(),
+            foodDescription = foodDescription.toString(),
+            foodIngredient = foodIngredients.toString(),
+            foodQuantity = 1)
         database.child("users").child(userId).child("CartItems").push().setValue(cartItem).addOnSuccessListener {
             Toast.makeText(this, "Thêm vào giỏ hàng thành công", Toast.LENGTH_SHORT).show()
-            finish()
         }
         .addOnFailureListener {
                 Toast.makeText(this, "Thêm vào giỏ hàng thất bại", Toast.LENGTH_SHORT).show()
             }
+
     }
 
 }

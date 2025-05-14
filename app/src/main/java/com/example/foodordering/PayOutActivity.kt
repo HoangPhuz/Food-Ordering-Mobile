@@ -2,6 +2,7 @@ package com.example.foodordering
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -47,7 +48,21 @@ class PayOutActivity : AppCompatActivity() {
         database = FirebaseDatabase.getInstance()
 
         setUserData()
+        val intent = intent
 
+        foodItemName = intent.getStringArrayListExtra("foodItemName") as ArrayList<String>
+        foodItemPrice = intent.getStringArrayListExtra("foodItemPrice") as ArrayList<String>
+        foodItemImage = intent.getStringArrayListExtra("foodItemImage") as ArrayList<String>
+        foodItemDescription = intent.getStringArrayListExtra("foodItemDescription") as ArrayList<String>
+        foodItemIngredient = intent.getStringArrayListExtra("foodItemIngredient") as ArrayList<String>
+        foodItemQuantities = intent.getIntegerArrayListExtra("foodItemQuantities") as ArrayList<Int>
+        Log.d("OrderingItem", "foodItemQuantities: $foodItemQuantities")
+        totalAmount = calculateTotalAmount().toString() + " vnđ"
+        //binding.totalAmount.isEnabled = false
+        binding.totalAmount.setText(totalAmount)
+        binding.buttonBack.setOnClickListener {
+            finish()
+        }
         binding.PlaceMyOrder.setOnClickListener {
             name = binding.name.text.toString().trim()
             address = binding.address.text.toString().trim()
@@ -64,6 +79,23 @@ class PayOutActivity : AppCompatActivity() {
         binding.buttonBack.setOnClickListener {
             finish()
         }
+    }
+
+    private fun calculateTotalAmount(): Int {
+        var totalAmount = 0
+        for (i in 0 until foodItemPrice.size) {
+            var price = foodItemPrice[i]
+            val lastVND = price.substring(price.length - 3)
+            val priceIntValue = if (lastVND == "vnđ") {
+                price.substring(0, price.length - 3).toInt()
+            }
+            else {
+                price.toInt()
+            }
+            totalAmount += priceIntValue*foodItemQuantities[i]
+        }
+        Log.d("OrderingItem", "totalAmount: $totalAmount")
+        return totalAmount
     }
 
     private fun placeOrder() {
@@ -85,11 +117,11 @@ class PayOutActivity : AppCompatActivity() {
     }
 
     private fun addOrderToHistory(orderDetails: OrderDetails) {
-            database.reference.child("users").child(userId).child("BuyHistory")
-                .child(orderDetails.itemPushKey!!)
-                .setValue(orderDetails).addOnSuccessListener {
+        database.reference.child("users").child(userId).child("BuyHistory")
+            .child(orderDetails.itemPushKey!!)
+            .setValue(orderDetails).addOnSuccessListener {
 
-                }
+            }
     }
 
     private fun removeItemsFromCart() {
