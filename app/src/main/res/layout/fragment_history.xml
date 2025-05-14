@@ -37,6 +37,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView26">
 
             <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/recentBuyItem"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
@@ -59,8 +60,8 @@
                     android:layout_marginStart="16dp"
                     android:fontFamily="@font/patrick_hand"
                     android:text="FoodName"
-                    android:textSize="16sp"
                     android:textColor="@color/black"
+                    android:textSize="16sp"
                     app:layout_constraintBottom_toTopOf="@+id/buyAgainFoodPrice"
                     app:layout_constraintStart_toEndOf="@+id/buyAgainFoodImage"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -71,8 +72,8 @@
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/patrick_hand"
                     android:text="10.000đ"
-                    android:textSize="20sp"
                     android:textColor="@color/textColor"
+                    android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/buyAgainFoodName"
                     app:layout_constraintTop_toBottomOf="@+id/buyAgainFoodName" />
@@ -95,10 +96,10 @@
                     android:id="@+id/receivedButton"
                     android:layout_width="60dp"
                     android:layout_height="20dp"
+                    android:layout_marginBottom="8dp"
                     android:background="@drawable/addtocartshape"
                     android:fontFamily="@font/patrick_hand"
                     android:text="Đã nhận"
-                    android:layout_marginBottom="8dp"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"

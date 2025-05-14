@@ -2,6 +2,7 @@ package com.example.foodordering
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -19,7 +20,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class PayOutActivity : AppCompatActivity() {
-    lateinit var binding: ActivityPayOutBinding
+    private lateinit var binding: ActivityPayOutBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var name:String
     private lateinit var address:String
@@ -41,12 +42,25 @@ class PayOutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPayOutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         auth = FirebaseAuth.getInstance()
-
         database = FirebaseDatabase.getInstance()
-
         setUserData()
+
+        val intent = intent
+        foodItemName = intent.getStringArrayListExtra("foodItemName") as ArrayList<String>
+        foodItemPrice = intent.getStringArrayListExtra("foodItemPrice") as ArrayList<String>
+        foodItemImage = intent.getStringArrayListExtra("foodItemImage") as ArrayList<String>
+        foodItemDescription = intent.getStringArrayListExtra("foodItemDescription") as ArrayList<String>
+        foodItemIngredient = intent.getStringArrayListExtra("foodItemIngredient") as ArrayList<String>
+        foodItemQuantities = intent.getIntegerArrayListExtra("foodItemQuantities") as ArrayList<Int>
+        totalAmount = calculateTotalAmount().toString() + " VNĐ"
+
+        //binding.totalAmount.isEnabled = false
+        binding.totalAmount.setText(totalAmount)
+
+        binding.buttonBack.setOnClickListener {
+            finish()
+        }
 
         binding.PlaceMyOrder.setOnClickListener {
             name = binding.name.text.toString().trim()
@@ -54,16 +68,29 @@ class PayOutActivity : AppCompatActivity() {
             phone = binding.phone.text.toString().trim()
             if(name.isEmpty() || address.isEmpty() || phone.isEmpty()){
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
-
             }
             else{
                 placeOrder()
             }
+        }
 
+    }
+
+    private fun calculateTotalAmount(): Int {
+        var totalAmount = 0
+        for (i in 0 until foodItemPrice.size) {
+            var price = foodItemPrice[i]
+            val lastVND = price.substring(price.length - 3)
+            val priceIntValue = if (lastVND == "vnđ") {
+                price.substring(0, price.length - 3).toInt()
+            }
+            else {
+                price.toInt()
+            }
+            totalAmount += priceIntValue*foodItemQuantities[i]
         }
-        binding.buttonBack.setOnClickListener {
-            finish()
-        }
+        Log.d("OrderingItem", "totalAmount: $totalAmount")
+        return totalAmount
     }
 
     private fun placeOrder() {
@@ -80,16 +107,13 @@ class PayOutActivity : AppCompatActivity() {
         }.addOnFailureListener{
             Toast.makeText(this, "Đặt hàng thất bại. Vui lòng thử lại!", Toast.LENGTH_SHORT).show()
         }
-
-
     }
 
     private fun addOrderToHistory(orderDetails: OrderDetails) {
-            database.reference.child("users").child(userId).child("BuyHistory")
-                .child(orderDetails.itemPushKey!!)
-                .setValue(orderDetails).addOnSuccessListener {
-
-                }
+        database.reference.child("users").child(userId).child("BuyHistory")
+            .child(orderDetails.itemPushKey!!)
+            .setValue(orderDetails).addOnSuccessListener {
+            }
     }
 
     private fun removeItemsFromCart() {
@@ -113,9 +137,8 @@ class PayOutActivity : AppCompatActivity() {
                     binding.address.setText(address)
                     binding.phone.setText(phone)
                 }
-
                 override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
+
                 }
 
             })

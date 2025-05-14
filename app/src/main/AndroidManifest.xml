@@ -13,6 +13,9 @@
         android:theme="@style/Theme.FoodOrdering"
         tools:targetApi="31">
         <activity
+            android:name=".RecentOrderItems"
+            android:exported="false" />
+        <activity
             android:name=".DetailsActivity"
             android:exported="false" />
         <activity
@@ -32,8 +35,7 @@
             android:exported="false" />
         <activity
             android:name=".LoginActivity"
-            android:exported="true"
-            >
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,8 +45,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:windowSoftInputMode="adjustPan">
-        </activity>
+            android:windowSoftInputMode="adjustPan"></activity>
     </application>
 
 </manifest>
