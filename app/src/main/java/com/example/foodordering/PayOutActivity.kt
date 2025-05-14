@@ -2,6 +2,7 @@ package com.example.foodordering
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -39,13 +40,24 @@ class PayOutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPayOutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         auth = FirebaseAuth.getInstance()
-
         database = FirebaseDatabase.getInstance()
-
         setUserData()
+        val intent = intent
 
+        foodItemName = intent.getStringArrayListExtra("foodItemName") as ArrayList<String>
+        foodItemPrice = intent.getStringArrayListExtra("foodItemPrice") as ArrayList<String>
+        foodItemImage = intent.getStringArrayListExtra("foodItemImage") as ArrayList<String>
+        foodItemDescription = intent.getStringArrayListExtra("foodItemDescription") as ArrayList<String>
+        foodItemIngredient = intent.getStringArrayListExtra("foodItemIngredient") as ArrayList<String>
+        foodItemQuantities = intent.getIntegerArrayListExtra("foodItemQuantities") as ArrayList<Int>
+        Log.d("OrderingItem", "foodItemQuantities: $foodItemQuantities")
+        totalAmount = calculateTotalAmount().toString() + " vnđ"
+        //binding.totalAmount.isEnabled = false
+        binding.totalAmount.setText(totalAmount)
+        binding.buttonBack.setOnClickListener {
+            finish()
+        }
         binding.PlaceMyOrder.setOnClickListener {
             val bottomSheetDialog = CongratsBottomSheet()
             bottomSheetDialog.show(supportFragmentManager, "Test")
@@ -53,6 +65,23 @@ class PayOutActivity : AppCompatActivity() {
         binding.buttonBack.setOnClickListener {
             finish()
         }
+    }
+
+    private fun calculateTotalAmount(): Int {
+        var totalAmount = 0
+        for (i in 0 until foodItemPrice.size) {
+            var price = foodItemPrice[i]
+            val lastVND = price.substring(price.length - 3)
+            val priceIntValue = if (lastVND == "vnđ") {
+                price.substring(0, price.length - 3).toInt()
+            }
+            else {
+                price.toInt()
+            }
+            totalAmount += priceIntValue*foodItemQuantities[i]
+        }
+        Log.d("OrderingItem", "totalAmount: $totalAmount")
+        return totalAmount
     }
 
     private fun setUserData() {

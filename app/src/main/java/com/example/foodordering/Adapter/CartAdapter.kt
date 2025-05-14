@@ -107,13 +107,18 @@ class CartAdapter(
             binding.minusButton.setOnClickListener {
                 if (itemQuantities[position] > 1) {
                     itemQuantities[position]--
+                    cartQuantity[position] = itemQuantities[position]
                     binding.cartItemQuantity.text = itemQuantities[position].toString()
                 }
             }
 
             binding.plusButton.setOnClickListener {
-                itemQuantities[position]++
-                binding.cartItemQuantity.text = itemQuantities[position].toString()
+                if (itemQuantities[position] < 10) {
+                    itemQuantities[position]++
+                    Log.d("OrderingItem", "cartQuantity size: " + cartQuantity.size)
+                    cartQuantity[position] = itemQuantities[position]
+                    binding.cartItemQuantity.text = itemQuantities[position].toString()
+                }
             }
 
             binding.deleteButton.setOnClickListener {

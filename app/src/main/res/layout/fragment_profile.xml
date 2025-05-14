@@ -44,7 +44,7 @@
                 android:ems="10"
                 android:fontFamily="@font/lato"
                 android:inputType="text"
-                android:text="Admin" />
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
@@ -79,7 +79,7 @@
                 android:ems="10"
                 android:fontFamily="@font/lato"
                 android:inputType="textMultiLine"
-                android:text="Name" />
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
@@ -112,7 +112,7 @@
                 android:ems="10"
                 android:fontFamily="@font/lato"
                 android:inputType="textEmailAddress"
-                android:text="admin@gmail.com" />
+                android:text="" />
         </LinearLayout>
 
         <LinearLayout
@@ -146,7 +146,7 @@
                 android:ems="10"
                 android:fontFamily="@font/lato"
                 android:inputType="phone"
-                android:text="0828142936" />
+                android:text="" />
         </LinearLayout>
 
 
