@@ -20,7 +20,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class PayOutActivity : AppCompatActivity() {
-    lateinit var binding: ActivityPayOutBinding
+    private lateinit var binding: ActivityPayOutBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var name:String
     private lateinit var address:String
