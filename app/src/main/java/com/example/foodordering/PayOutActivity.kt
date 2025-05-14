@@ -80,9 +80,9 @@ class PayOutActivity : AppCompatActivity() {
         var totalAmount = 0
         for (i in 0 until foodItemPrice.size) {
             var price = foodItemPrice[i]
-            val lastVND = price.substring(price.length - 3)
-            val priceIntValue = if (lastVND == "vnđ") {
-                price.substring(0, price.length - 3).toInt()
+            val lastVND = price.substring(price.length - 4)
+            val priceIntValue = if (lastVND == " VNĐ") {
+                price.substring(0, price.length - 4).toInt()
             }
             else {
                 price.toInt()

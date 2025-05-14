@@ -22,7 +22,7 @@
             android:textSize="16sp"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/cardView"
@@ -51,7 +51,7 @@
                     android:src="@drawable/menu2"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"/>
 
                 <TextView
                     android:id="@+id/buyAgainFoodName"
@@ -64,7 +64,7 @@
                     android:textSize="16sp"
                     app:layout_constraintBottom_toTopOf="@+id/buyAgainFoodPrice"
                     app:layout_constraintStart_toEndOf="@+id/buyAgainFoodImage"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"/>
 
                 <TextView
                     android:id="@+id/buyAgainFoodPrice"
@@ -76,7 +76,7 @@
                     android:textSize="20sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="@+id/buyAgainFoodName"
-                    app:layout_constraintTop_toBottomOf="@+id/buyAgainFoodName" />
+                    app:layout_constraintTop_toBottomOf="@+id/buyAgainFoodName"/>
 
                 <androidx.cardview.widget.CardView
                     android:id="@+id/orderStatus"
@@ -105,7 +105,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@+id/orderStatus"
                     app:layout_constraintStart_toStartOf="@+id/orderStatus"
-                    app:layout_constraintTop_toBottomOf="@+id/orderStatus" />
+                    app:layout_constraintTop_toBottomOf="@+id/orderStatus"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
 
@@ -120,7 +120,7 @@
             android:textSize="16sp"
             android:textColor="@color/black"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView" />
+            app:layout_constraintTop_toBottomOf="@+id/cardView"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/buyAgainRecyclerView"
@@ -131,7 +131,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             tools:listitem="@layout/buy_again_item"
-            app:layout_constraintTop_toBottomOf="@+id/textView29" />
+            app:layout_constraintTop_toBottomOf="@+id/textView29"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

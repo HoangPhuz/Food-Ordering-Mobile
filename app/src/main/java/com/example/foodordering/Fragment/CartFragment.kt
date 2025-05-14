@@ -10,10 +10,8 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodordering.Adapter.CartAdapter
-import com.example.foodordering.CongratsBottomSheet
 import com.example.foodordering.Model.CartItems
 import com.example.foodordering.PayOutActivity
-import com.example.foodordering.R
 import com.example.foodordering.databinding.FragmentCartBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -34,8 +32,6 @@ class CartFragment : Fragment() {
     private lateinit var foodQuantity: MutableList<Int>
     private lateinit var cartAdapter: CartAdapter
     private lateinit var userId:String
-
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -89,10 +85,7 @@ class CartFragment : Fragment() {
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(requireContext(), "Đặt hàng thất bại. Vui lòng thử lại!", Toast.LENGTH_SHORT).show()
             }
-
         })
-
-
     }
 
     private fun orderNow(foodName: MutableList<String>, foodPrice: MutableList<String>, foodImage: MutableList<String>, foodDescription: MutableList<String>, foodIngredient: MutableList<String>, foodQuantities: MutableList<Int>) {
@@ -105,7 +98,6 @@ class CartFragment : Fragment() {
             intent.putStringArrayListExtra("foodItemIngredient", ArrayList(foodIngredient))
             intent.putIntegerArrayListExtra("foodItemQuantities", ArrayList(foodQuantities))
             startActivity(intent)
-
         }
     }
 
@@ -145,11 +137,9 @@ class CartFragment : Fragment() {
             override fun onCancelled(error: DatabaseError) {
                 Toast.makeText(requireContext(), "Lỗi khi lấy dữ liệu", Toast.LENGTH_SHORT).show()
             }
-
         })
     }
 
     companion object {
-
     }
 }

@@ -31,7 +31,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                tools:srcCompat="@tools:sample/avatars"/>
 
             <TextView
                 android:id="@+id/cartFoodName"
@@ -43,7 +43,7 @@
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@+id/cartItemPrice"
                 app:layout_constraintStart_toEndOf="@+id/cartImage"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
                 android:id="@+id/cartItemPrice"
@@ -55,7 +55,7 @@
                 android:textColor="@color/textColor"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/cartImage"
-                app:layout_constraintTop_toBottomOf="@+id/cartFoodName" />
+                app:layout_constraintTop_toBottomOf="@+id/cartFoodName"/>
 
 
             <TextView
@@ -67,7 +67,7 @@
                 android:text="1"
                 app:layout_constraintBottom_toBottomOf="@+id/minusButton"
                 app:layout_constraintEnd_toStartOf="@+id/minusButton"
-                app:layout_constraintTop_toTopOf="@+id/minusButton" />
+                app:layout_constraintTop_toTopOf="@+id/minusButton"/>
 
             <ImageButton
                 android:id="@+id/plusButton"
@@ -79,7 +79,7 @@
                 android:src="@drawable/plus"
                 app:layout_constraintBottom_toBottomOf="@+id/cartItemQuantity"
                 app:layout_constraintEnd_toStartOf="@+id/cartItemQuantity"
-                app:layout_constraintTop_toTopOf="@+id/cartItemQuantity" />
+                app:layout_constraintTop_toTopOf="@+id/cartItemQuantity"/>
 
             <ImageButton
                 android:id="@+id/minusButton"
@@ -91,7 +91,7 @@
                 android:padding="2dp"
                 android:src="@drawable/minus"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <ImageButton
                 android:id="@+id/deleteButton"
@@ -105,7 +105,7 @@
                 app:layout_constraintEnd_toEndOf="@+id/minusButton"
                 app:layout_constraintHorizontal_bias="0.517"
                 app:layout_constraintStart_toStartOf="@+id/plusButton"
-                app:layout_constraintTop_toBottomOf="@+id/minusButton" />
+                app:layout_constraintTop_toBottomOf="@+id/minusButton"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
