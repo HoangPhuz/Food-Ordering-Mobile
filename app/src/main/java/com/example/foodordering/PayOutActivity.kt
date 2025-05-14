@@ -42,43 +42,38 @@ class PayOutActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityPayOutBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
         auth = FirebaseAuth.getInstance()
-
         database = FirebaseDatabase.getInstance()
-
         setUserData()
-        val intent = intent
 
+        val intent = intent
         foodItemName = intent.getStringArrayListExtra("foodItemName") as ArrayList<String>
         foodItemPrice = intent.getStringArrayListExtra("foodItemPrice") as ArrayList<String>
         foodItemImage = intent.getStringArrayListExtra("foodItemImage") as ArrayList<String>
         foodItemDescription = intent.getStringArrayListExtra("foodItemDescription") as ArrayList<String>
         foodItemIngredient = intent.getStringArrayListExtra("foodItemIngredient") as ArrayList<String>
         foodItemQuantities = intent.getIntegerArrayListExtra("foodItemQuantities") as ArrayList<Int>
-        Log.d("OrderingItem", "foodItemQuantities: $foodItemQuantities")
-        totalAmount = calculateTotalAmount().toString() + " vnđ"
+        totalAmount = calculateTotalAmount().toString() + " VNĐ"
+
         //binding.totalAmount.isEnabled = false
         binding.totalAmount.setText(totalAmount)
+
         binding.buttonBack.setOnClickListener {
             finish()
         }
+
         binding.PlaceMyOrder.setOnClickListener {
             name = binding.name.text.toString().trim()
             address = binding.address.text.toString().trim()
             phone = binding.phone.text.toString().trim()
             if(name.isEmpty() || address.isEmpty() || phone.isEmpty()){
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show()
-
             }
             else{
                 placeOrder()
             }
+        }
 
-        }
-        binding.buttonBack.setOnClickListener {
-            finish()
-        }
     }
 
     private fun calculateTotalAmount(): Int {
@@ -112,15 +107,12 @@ class PayOutActivity : AppCompatActivity() {
         }.addOnFailureListener{
             Toast.makeText(this, "Đặt hàng thất bại. Vui lòng thử lại!", Toast.LENGTH_SHORT).show()
         }
-
-
     }
 
     private fun addOrderToHistory(orderDetails: OrderDetails) {
         database.reference.child("users").child(userId).child("BuyHistory")
             .child(orderDetails.itemPushKey!!)
             .setValue(orderDetails).addOnSuccessListener {
-
             }
     }
 
@@ -145,9 +137,8 @@ class PayOutActivity : AppCompatActivity() {
                     binding.address.setText(address)
                     binding.phone.setText(phone)
                 }
-
                 override fun onCancelled(error: DatabaseError) {
-                    TODO("Not yet implemented")
+
                 }
 
             })

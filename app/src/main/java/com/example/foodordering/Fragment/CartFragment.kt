@@ -81,10 +81,7 @@ class CartFragment : Fragment() {
                     orderItems?.foodDescription?.let { foodDescription.add(it) }
                     orderItems?.foodImage?.let { foodImage.add(it) }
                     orderItems?.foodIngredient?.let { foodIngredient.add(it) }
-                    orderItems?.foodQuantity?.let {
-                        foodQuantities.add(it)
-                        Log.d("OrderingItem", "it: $it")
-                    }
+                    orderItems?.foodQuantity?.let { foodQuantities.add(it)  }
                 }
                 orderNow(foodName, foodPrice, foodImage, foodDescription, foodIngredient, foodQuantities)
             }
