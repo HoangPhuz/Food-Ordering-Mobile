@@ -66,6 +66,7 @@
                 />
 
             <EditText
+                android:id="@+id/name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -100,6 +101,7 @@
                 android:textSize="20sp"/>
 
             <EditText
+                android:id="@+id/address"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -136,6 +138,7 @@
                 android:textSize="20sp" />
 
             <EditText
+                android:id="@+id/phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -204,6 +207,7 @@
             </TextView>
 
             <EditText
+                android:id="@+id/totalAmount"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -215,8 +219,7 @@
                 android:paddingEnd="32dp"
                 android:text="500.000 vnđ"
                 android:textColor="@color/textColor"
-                android:textSize="20sp">
-            </EditText>
+                android:textSize="20sp"></EditText>
 
         </LinearLayout>
     </LinearLayout>
