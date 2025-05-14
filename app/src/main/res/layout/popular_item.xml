@@ -59,29 +59,26 @@
                 android:id="@+id/pricePopular"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:fontFamily="@font/lato"
                 android:text="10.000đ"
                 android:textColor="@color/textColor"
                 android:textSize="20sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.684"
-                app:layout_constraintStart_toEndOf="@+id/foodNamePopular"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintEnd_toEndOf="@id/addToCartPopular"
+                app:layout_constraintStart_toStartOf="@+id/addToCartPopular"
+                tools:layout_editor_absoluteY="11dp" />
 
             <TextView
                 android:id="@+id/addToCartPopular"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:layout_marginTop="12dp"
+                android:layout_marginEnd="24dp"
                 android:background="@drawable/addtocartshape"
                 android:fontFamily="@font/lato"
                 android:gravity="center"
                 android:text="Thêm vào giỏ hàng"
                 android:textColor="@color/white"
-                app:layout_constraintEnd_toEndOf="@+id/pricePopular"
-                app:layout_constraintHorizontal_bias="0.613"
-                app:layout_constraintStart_toStartOf="@+id/pricePopular"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/pricePopular" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 

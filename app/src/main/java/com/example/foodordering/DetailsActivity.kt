@@ -57,14 +57,14 @@ class DetailsActivity : AppCompatActivity() {
         val userId = auth.currentUser?.uid ?: ""
         //Tạo đối tượng cartItems
         val cartItem = CartItems(foodName.toString(),foodImage.toString(),foodPrice.toString()
-            ,foodDescription.toString(),"1")
+            ,foodDescription.toString(),foodIngredients.toString(), 1)
         database.child("users").child(userId).child("CartItems").push().setValue(cartItem).addOnSuccessListener {
             Toast.makeText(this, "Thêm vào giỏ hàng thành công", Toast.LENGTH_SHORT).show()
+            finish()
         }
         .addOnFailureListener {
                 Toast.makeText(this, "Thêm vào giỏ hàng thất bại", Toast.LENGTH_SHORT).show()
             }
-
     }
 
 }
