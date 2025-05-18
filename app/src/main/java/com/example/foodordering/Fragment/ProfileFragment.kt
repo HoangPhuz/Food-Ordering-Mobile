@@ -40,6 +40,21 @@ class ProfileFragment : Fragment() {
             updateUserData(name, address, phone, email)
         }
         setUserData()
+        binding.apply {
+            name.isEnabled = false
+            email.isEnabled = false
+            address.isEnabled = false
+            phone.isEnabled = false
+        }
+        binding.editButton.setOnClickListener{
+            binding.apply {
+                name.isEnabled = !name.isEnabled
+                email.isEnabled = !email.isEnabled
+                address.isEnabled = !address.isEnabled
+                phone.isEnabled = !phone.isEnabled
+            }
+        }
+
         return binding.root
     }
 

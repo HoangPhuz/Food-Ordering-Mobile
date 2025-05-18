@@ -88,9 +88,7 @@
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.133">
-
-                </androidx.cardview.widget.CardView>
+                    app:layout_constraintVertical_bias="0.133"/>
 
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/receivedButton"
@@ -100,6 +98,7 @@
                     android:background="@drawable/addtocartshape"
                     android:fontFamily="@font/patrick_hand"
                     android:text="Đã nhận"
+                    android:visibility="invisible"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     app:layout_constraintBottom_toBottomOf="parent"
