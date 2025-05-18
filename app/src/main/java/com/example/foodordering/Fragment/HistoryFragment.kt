@@ -54,17 +54,32 @@ class HistoryFragment : Fragment() {
         binding.recentBuyItem.setOnClickListener {
             seeItemsRecentBuy()
         }
+        binding.receivedButton.setOnClickListener {
+            updateOrderStatus()
+        }
 
 
         return binding.root
     }
 
+    private fun updateOrderStatus() {
+        val itemPushKey = listOfOrderItem[0].itemPushKey
+        val completeOrderRef = database.reference.child("CompletedOrder").child(itemPushKey!!)
+        completeOrderRef.child("paymentReceived").setValue(true)
+
+
+    }
+
     private fun seeItemsRecentBuy() {
-        listOfOrderItem.firstOrNull()?.let { recentBuy ->
-            val intent = Intent(requireContext(), RecentOrderItems::class.java)
-            intent.putExtra("recentBuyOrderItem", recentBuy)
-            startActivity(intent)
-        }
+        val intent = Intent(requireContext(), RecentOrderItems::class.java)
+        intent.putExtra("recentBuyOrderItem", listOfOrderItem)
+        startActivity(intent)
+//
+//        listOfOrderItem.firstOrNull()?.let { recentBuy ->
+//            val intent = Intent(requireContext(), RecentOrderItems::class.java)
+//            intent.putExtra("recentBuyOrderItem", listOfOrderItem)
+//            startActivity(intent)
+//        }
     }
 
     private fun retrieveBuyHistory() {
