@@ -31,16 +31,27 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/foodImage"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginLeft="8dp"
-                android:scaleType="centerCrop"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardFoodImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:layout_constraintTop_toTopOf="parent">
+                <ImageView
+                    android:id="@+id/foodImage"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+            </androidx.cardview.widget.CardView>
+
+
 
             <TextView
                 android:id="@+id/foodName"
@@ -52,7 +63,7 @@
                 android:textColor="@color/black"
                 android:textSize="16sp"
                 app:layout_constraintBottom_toTopOf="@+id/textView28"
-                app:layout_constraintStart_toEndOf="@+id/foodImage"
+                app:layout_constraintStart_toEndOf="@+id/cardFoodImage"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
@@ -66,7 +77,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.866"
-                app:layout_constraintStart_toEndOf="@+id/foodImage"
+                app:layout_constraintStart_toEndOf="@+id/cardFoodImage"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView

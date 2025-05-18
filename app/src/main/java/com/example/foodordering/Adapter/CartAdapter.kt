@@ -28,28 +28,27 @@ class CartAdapter(
     private val cartImages: MutableList<String>,
     private val cartDescriptions: MutableList<String>,
     private val cartIngredients: MutableList<String>,
-    private val cartQuantity: MutableList<Int>
+    private val cartQuantity: MutableList<Int> // Sẽ là nguồn chính cho số lượng
 ) : RecyclerView.Adapter<CartAdapter.CartViewHolder>() {
 
     private val auth = FirebaseAuth.getInstance()
+    // cartItemsReference là thuộc tính của instance, không nằm trong companion object
+    private lateinit var cartItemsReference: DatabaseReference
 
-    init{
-        val database = FirebaseDatabase.getInstance().reference
+    init {
         val userId = auth.currentUser?.uid ?: ""
-        val cartItemNumber = cartItems.size
+        val database = FirebaseDatabase.getInstance().reference
+        cartItemsReference = database.child("users").child(userId).child("CartItems")
 
-        itemQuantities = IntArray(cartItemNumber) { 1 }
-        cartItemsReference = database.child("user").child(userId).child("CartItems")
-        database.child("user").child(userId).child("CartItems").removeValue()
+        // DÒNG GÂY LỖI ĐÃ BỊ XÓA/BÌNH LUẬN:
+        // database.child("user").child(userId).child("CartItems").removeValue()
+
+        // Đảm bảo cartQuantity có kích thước phù hợp với các danh sách khác.
+        // Lý tưởng nhất, việc này nên được xử lý trong CartFragment trước khi truyền vào adapter.
+        // Ví dụ: nếu cartQuantity được khởi tạo rỗng, bạn có thể muốn điền giá trị mặc định (ví dụ: 1)
+        // cho mỗi item, hoặc đảm bảo nó được điền đúng từ Firebase.
+        // Hiện tại, code đang giả định cartQuantity đã được truyền vào với kích thước và giá trị đúng.
     }
-
-    companion object{
-        private var itemQuantities = intArrayOf()
-        private lateinit var cartItemsReference : DatabaseReference
-
-    }
-        
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {
         val binding = CartItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -64,29 +63,33 @@ class CartAdapter(
         return cartItems.size
     }
 
-
+    // Trả về một bản sao của danh sách số lượng hiện tại
     fun getUpdatedQuantities(): MutableList<Int> {
-        val itemQuantity = mutableListOf<Int>()
-        itemQuantity.addAll(cartQuantity)
-        return itemQuantity
+        return ArrayList(cartQuantity) // Sử dụng ArrayList để tạo bản sao mới
     }
 
-    inner class CartViewHolder(val binding: CartItemBinding) : RecyclerView.ViewHolder(binding.root){
-        fun bind(position: Int){
-            val quantity = itemQuantities[position]
-            binding.cartFoodName.text = cartItems[position]
-            binding.cartItemPrice.text = cartItemPrices[position]
+    inner class CartViewHolder(val binding: CartItemBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(position: Int) {
+            // Sử dụng adapterPosition để đảm bảo lấy đúng vị trí, đặc biệt sau khi có thay đổi item
+            val currentPosition = adapterPosition
+            if (currentPosition == RecyclerView.NO_POSITION) {
+                // Item không còn tồn tại hoặc đang trong quá trình thay đổi, không làm gì cả
+                return
+            }
 
-            val uriString = cartImages[position]
-            var uri = Uri.parse(uriString)
-            Glide.with(binding.root.context).load(uri).listener(object : RequestListener<Drawable>{
+            binding.cartFoodName.text = cartItems[currentPosition]
+            binding.cartItemPrice.text = cartItemPrices[currentPosition]
+
+            val uriString = cartImages[currentPosition]
+            val uri = Uri.parse(uriString)
+            Glide.with(binding.root.context).load(uri).listener(object : RequestListener<Drawable> {
                 override fun onLoadFailed(
                     e: GlideException?,
                     model: Any?,
                     target: Target<Drawable>,
                     isFirstResource: Boolean
                 ): Boolean {
-                    Log.d("Glide", "Lỗi tải ảnh: ${e?.message}")
+                    Log.d("Glide", "Lỗi tải ảnh cho ${cartItems[currentPosition]}: ${e?.message}")
                     return false
                 }
 
@@ -97,86 +100,104 @@ class CartAdapter(
                     dataSource: DataSource,
                     isFirstResource: Boolean
                 ): Boolean {
-                    Log.d("Glide", "Ảnh đã tải thành công")
+                    // Log.d("Glide", "Ảnh đã tải thành công cho ${cartItems[currentPosition]}")
                     return false
                 }
             }).into(binding.cartImage)
 
-            binding.cartItemQuantity.text = quantity.toString();
+            binding.cartItemQuantity.text = cartQuantity[currentPosition].toString()
 
             binding.minusButton.setOnClickListener {
-                if (itemQuantities[position] > 1) {
-                    itemQuantities[position]--
-                    cartQuantity[position] = itemQuantities[position]
-                    binding.cartItemQuantity.text = itemQuantities[position].toString()
+                val pos = adapterPosition // Lấy vị trí hiện tại khi click
+                if (pos != RecyclerView.NO_POSITION) {
+                    if (cartQuantity[pos] > 1) {
+                        cartQuantity[pos]--
+                        // Cập nhật lại view cho item này để hiển thị số lượng mới
+                        notifyItemChanged(pos)
+                    }
                 }
             }
 
             binding.plusButton.setOnClickListener {
-                if (itemQuantities[position] < 10) {
-                    itemQuantities[position]++
-                    Log.d("OrderingItem", "cartQuantity size: " + cartQuantity.size)
-                    cartQuantity[position] = itemQuantities[position]
-                    binding.cartItemQuantity.text = itemQuantities[position].toString()
+                val pos = adapterPosition // Lấy vị trí hiện tại khi click
+                if (pos != RecyclerView.NO_POSITION) {
+                    if (cartQuantity[pos] < 10) { // Giới hạn số lượng tối đa là 10
+                        cartQuantity[pos]++
+                        // Cập nhật lại view cho item này
+                        notifyItemChanged(pos)
+                    }
                 }
             }
 
             binding.deleteButton.setOnClickListener {
-                val positionRetrieve = position
-                getUniqueKeyAtPosition(positionRetrieve){uniqueKey ->
-                    if(uniqueKey != null){
-                        removeItem(position, uniqueKey)
+                val pos = adapterPosition // Lấy vị trí hiện tại khi click
+                if (pos != RecyclerView.NO_POSITION) {
+                    getUniqueKeyAtPosition(pos) { uniqueKey ->
+                        Log.d("deleteOrderItem", "Callback cho vị trí $pos, uniqueKey: $uniqueKey")
+                        if (uniqueKey != null) {
+                            removeItem(pos, uniqueKey)
+                        } else {
+                            Log.e("deleteOrderItem", "Không lấy được uniqueKey cho vị trí $pos. Không thể xóa.")
+                            Toast.makeText(binding.root.context, "Lỗi: Không tìm thấy sản phẩm để xóa", Toast.LENGTH_SHORT).show()
+                        }
                     }
                 }
-
             }
-
-
         }
 
         private fun removeItem(position: Int, uniqueKey: String) {
-                if(uniqueKey != null){
-                    cartItemsReference.child(uniqueKey).removeValue().addOnSuccessListener {
-                        cartItems.removeAt(position)
-                        cartItemPrices.removeAt(position)
-                        cartImages.removeAt(position)
-                        cartDescriptions.removeAt(position)
-                        cartIngredients.removeAt(position)
-                        cartQuantity.removeAt(position)
-                        Toast.makeText(binding.root.context, "Xoá thành công", Toast.LENGTH_SHORT).show()
+            if (position < 0 || position >= cartItems.size) {
+                Log.e("removeItem", "Vị trí không hợp lệ: $position. Không thể xóa.")
+                return
+            }
+            cartItemsReference.child(uniqueKey).removeValue().addOnSuccessListener {
+                Log.d("removeItem", "Xóa thành công item với key $uniqueKey trên Firebase.")
+                // Xóa item khỏi tất cả các danh sách local
+                cartItems.removeAt(position)
+                cartItemPrices.removeAt(position)
+                cartImages.removeAt(position)
+                cartDescriptions.removeAt(position)
+                cartIngredients.removeAt(position)
+                cartQuantity.removeAt(position) // Quan trọng: Xóa cả số lượng tương ứng
 
-                        //update itemQuantities
-                        itemQuantities = itemQuantities.filterIndexed { index, i -> index != position }.toIntArray()
-                        notifyItemRemoved(position)
-                        notifyItemRangeChanged(position, cartItems.size)
-                    }.addOnFailureListener{
-                        Toast.makeText(binding.root.context, "Xóa thất bại", Toast.LENGTH_SHORT).show()
-                    }
+                notifyItemRemoved(position)
+                // Thông báo cho adapter về sự thay đổi phạm vi của các item còn lại
+                // Điều này giúp cập nhật đúng các vị trí (positions) của các viewholder khác
+                notifyItemRangeChanged(position, cartItems.size - position)
 
-
-                }
+                Toast.makeText(binding.root.context, "Xoá thành công", Toast.LENGTH_SHORT).show()
+            }.addOnFailureListener { exception ->
+                Log.e("removeItem", "Xóa thất bại item với key $uniqueKey trên Firebase: ${exception.message}")
+                Toast.makeText(binding.root.context, "Xóa thất bại trên server", Toast.LENGTH_SHORT).show()
+            }
         }
 
-        private fun getUniqueKeyAtPosition(positionRetrieve: Int, onComplete:(String?) -> Unit){
+        private fun getUniqueKeyAtPosition(positionRetrieve: Int, onComplete: (String?) -> Unit) {
+            Log.d("getUniqueKey", "Đang lấy key cho vị trí: $positionRetrieve")
             cartItemsReference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
-                        var uniqueKey:String?= null
-                        snapshot.children.forEachIndexed{index, dataSnapshot ->
-                            if(index == positionRetrieve){
-                                uniqueKey = dataSnapshot.key
-                                return@forEachIndexed
-                            }
+                    var uniqueKey: String? = null
+                    if (snapshot.exists() && snapshot.hasChildren()) {
+                        // Chuyển children thành List để truy cập bằng index một cách an toàn
+                        // Giả định thứ tự item trên Firebase khớp với thứ tự trong adapter
+                        val childrenList = snapshot.children.toList()
+                        if (positionRetrieve >= 0 && positionRetrieve < childrenList.size) {
+                            uniqueKey = childrenList[positionRetrieve].key
+                            Log.d("getUniqueKey", "Tìm thấy key: $uniqueKey cho vị trí $positionRetrieve")
+                        } else {
+                            Log.w("getUniqueKey", "Vị trí $positionRetrieve nằm ngoài giới hạn của danh sách children trên Firebase (size: ${childrenList.size})")
                         }
+                    } else {
+                        Log.w("getUniqueKey", "Không tìm thấy children tại cartItemsReference hoặc snapshot không tồn tại.")
+                    }
                     onComplete(uniqueKey)
-
                 }
 
                 override fun onCancelled(error: DatabaseError) {
-
+                    Log.e("getUniqueKey", "Lỗi khi lấy dữ liệu từ Firebase: ${error.message}")
+                    onComplete(null) // Trả về null nếu có lỗi
                 }
-
             })
         }
     }
-
 }

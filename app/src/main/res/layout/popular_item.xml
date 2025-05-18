@@ -31,16 +31,27 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/foodImagePopular"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
-                android:layout_marginLeft="8dp"
-                android:scaleType="centerCrop"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardFoodImagePopular"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                app:cardCornerRadius="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars" />
+                app:layout_constraintTop_toTopOf="parent">
+                <ImageView
+                    android:id="@+id/foodImagePopular"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@tools:sample/avatars" />
+
+            </androidx.cardview.widget.CardView>
+
+
 
             <TextView
                 android:id="@+id/foodNamePopular"
@@ -51,9 +62,9 @@
                 android:text="Food Name"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/foodImagePopular"
-                app:layout_constraintStart_toEndOf="@+id/foodImagePopular"
-                app:layout_constraintTop_toTopOf="@+id/foodImagePopular" />
+                app:layout_constraintBottom_toBottomOf="@+id/cardFoodImagePopular"
+                app:layout_constraintStart_toEndOf="@+id/cardFoodImagePopular"
+                app:layout_constraintTop_toTopOf="@+id/cardFoodImagePopular" />
 
             <TextView
                 android:id="@+id/foodpricePopular"
@@ -63,9 +74,10 @@
                 android:text="10.000đ"
                 android:textColor="@color/textColor"
                 android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@+id/foodNamePopular"
                 app:layout_constraintEnd_toEndOf="@id/addToCartPopular"
                 app:layout_constraintStart_toStartOf="@+id/addToCartPopular"
-                tools:layout_editor_absoluteY="11dp" />
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/addToCartPopular"

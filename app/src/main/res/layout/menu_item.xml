@@ -25,18 +25,28 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/menuImage"
-                android:layout_width="64dp"
-                android:layout_height="64dp"
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardMenuImage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
-                android:scaleType="centerCrop"
+                app:cardCornerRadius="15dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                tools:srcCompat="@tools:sample/avatars"/>
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/menuImage"
+                    android:layout_width="64dp"
+                    android:layout_height="64dp"
+                    android:scaleType="centerCrop"
+                    tools:srcCompat="@tools:sample/avatars"/>
+
+            </androidx.cardview.widget.CardView>
+
+
 
             <TextView
                 android:id="@+id/menuFoodName"
@@ -47,9 +57,9 @@
                 android:text="Food Name"
                 android:textColor="@color/black"
                 android:textSize="16sp"
-                app:layout_constraintBottom_toBottomOf="@+id/menuImage"
-                app:layout_constraintStart_toEndOf="@+id/menuImage"
-                app:layout_constraintTop_toTopOf="@+id/menuImage"/>
+                app:layout_constraintBottom_toBottomOf="@+id/cardMenuImage"
+                app:layout_constraintStart_toEndOf="@+id/cardMenuImage"
+                app:layout_constraintTop_toTopOf="@+id/cardMenuImage"/>
 
             <TextView
                 android:id="@+id/menuPrice"
@@ -77,7 +87,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.865"
-                app:layout_constraintStart_toEndOf="@+id/menuImage"
+                app:layout_constraintStart_toEndOf="@+id/cardMenuImage"
                 app:layout_constraintTop_toBottomOf="@+id/menuPrice"
                 app:layout_constraintVertical_bias="0.238"/>
         </androidx.constraintlayout.widget.ConstraintLayout>

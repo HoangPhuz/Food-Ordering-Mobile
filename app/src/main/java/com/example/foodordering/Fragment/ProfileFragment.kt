@@ -22,15 +22,11 @@ class ProfileFragment : Fragment() {
 
     private val auth = FirebaseAuth.getInstance()
     private val database = FirebaseDatabase.getInstance()
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
         binding.saveInforButton.setOnClickListener {
             val name = binding.name.text.toString()
@@ -38,6 +34,10 @@ class ProfileFragment : Fragment() {
             val phone = binding.phone.text.toString()
             val email = binding.email.text.toString()
             updateUserData(name, address, phone, email)
+            binding.name.isEnabled = false
+            binding.email.isEnabled = false
+            binding.address.isEnabled = false
+            binding.phone.isEnabled = false
         }
         setUserData()
         binding.apply {
@@ -54,7 +54,6 @@ class ProfileFragment : Fragment() {
                 phone.isEnabled = !phone.isEnabled
             }
         }
-
         return binding.root
     }
 
@@ -94,13 +93,8 @@ class ProfileFragment : Fragment() {
                         }
                     }
                 }
-
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-
+                override fun onCancelled(error: DatabaseError) {}
             })
         }
-
     }
 }

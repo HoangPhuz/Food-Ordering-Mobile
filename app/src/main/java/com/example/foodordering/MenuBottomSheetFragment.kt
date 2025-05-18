@@ -16,20 +16,13 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
 class MenuBottomSheetFragment : BottomSheetDialogFragment() {
-
     private lateinit var binding: FragmentMenuBottomSheetBinding
     private lateinit var database: FirebaseDatabase
     private lateinit var menuItems: MutableList<MenuItem>
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentMenuBottomSheetBinding.inflate(inflater, container, false)
         binding.buttonBack.setOnClickListener {
             dismiss()
@@ -54,13 +47,8 @@ class MenuBottomSheetFragment : BottomSheetDialogFragment() {
                 //set adapter sau khi nhận data
                 setAdapters()
             }
-
-
-
             override fun onCancelled(error: DatabaseError) {
-
             }
-
         })
     }
     private fun setAdapters() {
@@ -75,10 +63,5 @@ class MenuBottomSheetFragment : BottomSheetDialogFragment() {
         }
 
     }
-
-    companion object {
-
-    }
-
-
+    companion object
 }
