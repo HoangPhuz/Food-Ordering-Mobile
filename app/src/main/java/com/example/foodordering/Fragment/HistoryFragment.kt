@@ -4,6 +4,7 @@ import android.content.Intent
 import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -67,7 +68,6 @@ class HistoryFragment : Fragment() {
         val itemPushKey = listOfOrderItem[0].itemPushKey
         val completeOrderReference = database.reference.child("CompletedOrder").child(itemPushKey!!)
         completeOrderReference.child("paymentReceived").setValue(true).addOnSuccessListener {
-
         }
     }
 
@@ -90,12 +90,14 @@ class HistoryFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for(buySnapshot in snapshot.children){
                     val buyHistoryItem = buySnapshot.getValue(OrderDetails::class.java)
+                    Log.d("HistoryFragment", "onDataChange: ${buyHistoryItem.toString()}")
                     buyHistoryItem?.let {
                         listOfOrderItem.add(it)
                     }
                 }
                 listOfOrderItem.reverse()
                 if(listOfOrderItem.isNotEmpty()){
+                    Log.d("HistoryFragment", "listOfOrderItem: ${listOfOrderItem.get(0).foodNames?.get(0)}")
                     setDataInRecentBuyItem()
                     setPreviousBuyItemsRecyclerView()
                 }
@@ -126,18 +128,16 @@ class HistoryFragment : Fragment() {
                     orderStatus.background.setTint(Color.GREEN)
                     receivedButton.visibility = View.VISIBLE
                 }
-
-                listOfOrderItem.reverse()
-                if(listOfOrderItem.isNotEmpty()){
-                }
             }
         }
     }
 
     private fun setPreviousBuyItemsRecyclerView() {
+        Log.d("HistoryFragment", "setPreviousBuyItemsRecyclerView: ${listOfOrderItem.size}")
         val buyAgainFoodName = mutableListOf<String>()
         val buyAgainFoodPrice = mutableListOf<String>()
         val buyAgainFoodImage = mutableListOf<String>()
+
         for(i in 1 until listOfOrderItem.size){
             listOfOrderItem[i].foodNames?.firstOrNull()?.let { buyAgainFoodName.add(it) }
             listOfOrderItem[i].foodPrices?.firstOrNull()?.let { buyAgainFoodPrice.add(it) }
@@ -148,9 +148,5 @@ class HistoryFragment : Fragment() {
         rv.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         buyAgainAdapter = BuyAgainAdapter(requireContext(), buyAgainFoodName, buyAgainFoodPrice, buyAgainFoodImage)
         rv.adapter = buyAgainAdapter
-
     }
-
-
-
 }
