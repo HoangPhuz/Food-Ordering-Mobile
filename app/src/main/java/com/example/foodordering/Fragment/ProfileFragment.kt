@@ -75,18 +75,28 @@ class ProfileFragment : Fragment() {
 
     private fun updateUserData(name: String, address: String, phone: String, email: String) {
         val userId = auth.currentUser?.uid
-        if(userId != null) {
+        if (userId != null) {
             val userRef = database.reference.child("users").child(userId)
-            val userData = hashMapOf(
+
+            // Tạo một Map chứa các trường bạn muốn cập nhật
+            val userDataUpdates = hashMapOf<String, Any>(
                 "username" to name,
                 "address" to address,
                 "phone" to phone,
                 "email" to email
-            ).toMap()
-            userRef.setValue(userData).addOnSuccessListener {
+                // Bạn có thể thêm các trường khác vào đây nếu cần cập nhật
+                // Ví dụ: nếu bạn chỉ muốn cập nhật tên và địa chỉ, Map sẽ là:
+                // "username" to name,
+                // "address" to address
+            )
+
+            // Sử dụng updateChildren() thay vì setValue()
+            userRef.updateChildren(userDataUpdates).addOnSuccessListener {
                 Toast.makeText(requireContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener {
-                Toast.makeText(requireContext(), "Cập nhật thất bại", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Cập nhật thất bại: ${it.message}", Toast.LENGTH_LONG).show()
+                // Log lỗi để debug dễ hơn
+                Log.e("ProfileFragment", "Lỗi cập nhật dữ liệu người dùng", it)
             }
         } else {
             Toast.makeText(requireContext(), "Vui lòng đăng nhập", Toast.LENGTH_SHORT).show()

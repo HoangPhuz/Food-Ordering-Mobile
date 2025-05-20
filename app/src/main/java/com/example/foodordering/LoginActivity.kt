@@ -156,17 +156,9 @@ class LoginActivity : AppCompatActivity() {
                 Log.w("LoginAction", "Fetching FCM registration token failed", task.exception)
                 return@addOnCompleteListener
             }
-            // Lấy token mới hoặc token hiện tại
             val token = task.result
             Log.d("LoginAction", "Current FCM Token after login: $token")
-
-            // Gọi hàm static (nếu bạn tạo nó là static) hoặc một cách nào đó để
-            // gọi logic lưu token.
-            // Nếu sendUserFCMTokenToDatabase không phải là static, bạn cần một cơ chế khác.
-            // Tuy nhiên, với cách bạn viết (trong companion object hoặc là top-level function nếu chuyển ra),
-            // bạn có thể gọi nó.
-            // Giả sử bạn tạo một companion object trong MyFirebaseMessagingService:
-            MyFirebaseMessagingService.sendUserFCMTokenToDatabase(token) // Nếu bạn đã tạo companion object và hàm static
+            MyFirebaseMessagingService.sendUserFCMTokenToDatabase(token)
         }
     }
 

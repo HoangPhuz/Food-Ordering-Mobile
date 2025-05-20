@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.foodordering.Model.UserModel
+import com.example.foodordering.Service.MyFirebaseMessagingService
 import com.example.foodordering.databinding.ActivitySignBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -22,6 +23,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
+import com.google.firebase.messaging.FirebaseMessaging
 
 class SignActivity : AppCompatActivity() {
     private lateinit var email: String
@@ -101,6 +103,8 @@ class SignActivity : AppCompatActivity() {
                                 // Lưu thông tin người dùng từ Google vào Database
                                 //saveGoogleUserToDatabase(account)
                                 Toast.makeText(this, "Đăng nhập Google thành công", Toast.LENGTH_SHORT).show()
+                                saveGoogleUserToDatabase(account)
+                                onLoginSuccess()
                                 startActivity(Intent(this, MainActivity::class.java))
                                 finish()
                             } else {
@@ -127,6 +131,7 @@ class SignActivity : AppCompatActivity() {
                 Toast.makeText(this, "Đăng ký thành công", Toast.LENGTH_SHORT).show()
                 val currentUsername = binding.userName.text.toString().trim()
                 saveUserToDatabase(currentUsername, email, password)
+                onLoginSuccess()
                 val intent = Intent(this, LoginActivity::class.java)
                 startActivity(intent)
                 finish()
@@ -173,6 +178,18 @@ class SignActivity : AppCompatActivity() {
             }
         } else {
             Log.e("Database", "Không lấy được User ID để lưu thông tin người dùng Google")
+        }
+    }
+
+    private fun onLoginSuccess() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("LoginAction", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+            val token = task.result
+            Log.d("LoginAction", "Current FCM Token after login: $token")
+            MyFirebaseMessagingService.sendUserFCMTokenToDatabase(token)
         }
     }
 }
