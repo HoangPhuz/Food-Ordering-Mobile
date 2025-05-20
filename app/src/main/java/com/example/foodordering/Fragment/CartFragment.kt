@@ -16,6 +16,7 @@ import com.example.foodordering.databinding.FragmentCartBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference // Thêm import
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 
@@ -29,116 +30,209 @@ class CartFragment : Fragment() {
     private lateinit var foodDescriptions: MutableList<String>
     private lateinit var foodImagesUri: MutableList<String>
     private lateinit var foodIngredients: MutableList<String>
-    private lateinit var foodQuantity: MutableList<Int>
+    private lateinit var foodQuantities: MutableList<Int> // Đổi tên cho nhất quán
     private lateinit var cartAdapter: CartAdapter
-    private lateinit var userId:String
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
+    private lateinit var userId: String
+    private lateinit var cartItemsRef: DatabaseReference // Thêm tham chiếu
+    private var cartValueEventListener: ValueEventListener? = null // Listener để có thể remove
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentCartBinding.inflate(inflater, container, false);
+    ): View { // Nên trả về View, không phải View? nếu layout luôn được inflate
+        binding = FragmentCartBinding.inflate(inflater, container, false)
 
         auth = FirebaseAuth.getInstance()
-        retrieveCartItems()
+        userId = auth.currentUser?.uid ?: ""
+        database = FirebaseDatabase.getInstance()
+
+        if (userId.isNotEmpty()) {
+            cartItemsRef = database.reference.child("users").child(userId).child("CartItems")
+            setupRecyclerView() // Khởi tạo RecyclerView và Adapter trước
+            retrieveCartItems()
+        } else {
+            Toast.makeText(requireContext(), "Vui lòng đăng nhập để xem giỏ hàng.", Toast.LENGTH_LONG).show()
+            // Có thể xử lý ẩn RecyclerView hoặc hiển thị thông báo "chưa đăng nhập"
+        }
 
 
         binding.proceedButton.setOnClickListener {
-            //
-            getOrderItemsDetail()
-
+            if (::cartAdapter.isInitialized && cartAdapter.itemCount > 0) { // Kiểm tra adapter và có item
+                getOrderItemsDetail()
+            } else {
+                Toast.makeText(requireContext(), "Giỏ hàng của bạn đang trống.", Toast.LENGTH_SHORT).show()
+            }
         }
         return binding.root
     }
 
-    private fun getOrderItemsDetail() {
-        val orderIdRef = database.getReference().child("users").child(userId).child("CartItems")
-        val foodName = mutableListOf<String>()
-        val foodPrice = mutableListOf<String>()
-        val foodImage = mutableListOf<String>()
-        val foodDescription = mutableListOf<String>()
-        val foodIngredient = mutableListOf<String>()
-        val foodQuantities = cartAdapter.getUpdatedQuantities()
-
-        orderIdRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for(foodSnapshot in snapshot.children){
-                    //Lấy mặt hàng trong giỏ hàng
-                    val orderItems = foodSnapshot.getValue(CartItems::class.java)
-                    Log.d("OrderingItem", "orderItems: $orderItems")
-                    //Thêm thông tin mặt hàng vào danh sách
-                    orderItems?.foodName?.let { foodName.add(it) }
-                    orderItems?.foodPrice?.let { foodPrice.add(it) }
-                    orderItems?.foodDescription?.let { foodDescription.add(it) }
-                    orderItems?.foodImage?.let { foodImage.add(it) }
-                    orderItems?.foodIngredient?.let { foodIngredient.add(it) }
-                    orderItems?.foodQuantity?.let { foodQuantities.add(it)  }
-                }
-                orderNow(foodName, foodPrice, foodImage, foodDescription, foodIngredient, foodQuantities)
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(requireContext(), "Đặt hàng thất bại. Vui lòng thử lại!", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
-
-    private fun orderNow(foodName: MutableList<String>, foodPrice: MutableList<String>, foodImage: MutableList<String>, foodDescription: MutableList<String>, foodIngredient: MutableList<String>, foodQuantities: MutableList<Int>) {
-        if(isAdded && context!=null){
-            val intent = Intent(requireContext(), PayOutActivity::class.java)
-            intent.putStringArrayListExtra("foodItemName", ArrayList(foodName))
-            intent.putStringArrayListExtra("foodItemPrice", ArrayList(foodPrice))
-            intent.putStringArrayListExtra("foodItemImage", ArrayList(foodImage))
-            intent.putStringArrayListExtra("foodItemDescription", ArrayList(foodDescription))
-            intent.putStringArrayListExtra("foodItemIngredient", ArrayList(foodIngredient))
-            intent.putIntegerArrayListExtra("foodItemQuantities", ArrayList(foodQuantities))
-            startActivity(intent)
-        }
-    }
-
-    private fun retrieveCartItems() {
-        database = FirebaseDatabase.getInstance()
-        userId = auth.currentUser?.uid ?: ""
-        val cartItemsRef = database.getReference().child("users").child(userId).child("CartItems")
-
+    private fun setupRecyclerView() {
         foodNames = mutableListOf()
         foodPrices = mutableListOf()
         foodDescriptions = mutableListOf()
         foodImagesUri = mutableListOf()
         foodIngredients = mutableListOf()
-        foodQuantity = mutableListOf()
+        foodQuantities = mutableListOf()
 
-        //fetch data từ firebase
-        cartItemsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        cartAdapter = CartAdapter(
+            requireContext(),
+            foodNames,
+            foodPrices,
+            foodImagesUri,
+            foodDescriptions,
+            foodIngredients,
+            foodQuantities
+        )
+        binding.cartRecycleView.layoutManager = LinearLayoutManager(requireContext())
+        binding.cartRecycleView.adapter = cartAdapter
+    }
+
+
+    private fun retrieveCartItems() {
+        // Xóa listener cũ nếu có để tránh leak và gọi nhiều lần
+        if (cartValueEventListener != null) {
+            cartItemsRef.removeEventListener(cartValueEventListener!!)
+        }
+
+        cartValueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                for(foodSnapshot in snapshot.children){
-                    val cartItems = foodSnapshot.getValue(CartItems::class.java)
-                    cartItems?.foodName?.let { foodNames.add(it) }
-                    cartItems?.foodPrice?.let { foodPrices.add(it) }
-                    cartItems?.foodDescription?.let { foodDescriptions.add(it) }
-                    cartItems?.foodImage?.let { foodImagesUri.add(it) }
-                    cartItems?.foodIngredient?.let { foodIngredients.add(it) }
-                    cartItems?.foodQuantity?.let { foodQuantity.add(it) }
-                }
-                setAdapter()
-            }
+                // Xóa dữ liệu cũ trong các list trước khi thêm mới
+                foodNames.clear()
+                foodPrices.clear()
+                foodDescriptions.clear()
+                foodImagesUri.clear()
+                foodIngredients.clear()
+                foodQuantities.clear()
 
-            private fun setAdapter() {
-                cartAdapter = CartAdapter(requireContext(), foodNames, foodPrices, foodImagesUri, foodDescriptions, foodIngredients, foodQuantity)
-                binding.cartRecycleView.layoutManager = LinearLayoutManager(requireContext(),LinearLayoutManager.VERTICAL, false)
-                binding.cartRecycleView.adapter = cartAdapter
+                for (foodSnapshot in snapshot.children) {
+                    val cartItem = foodSnapshot.getValue(CartItems::class.java)
+                    cartItem?.let { item ->
+                        item.foodName?.let { foodNames.add(it) }
+                        item.foodPrice?.let { foodPrices.add(it) }
+                        item.foodDescription?.let { foodDescriptions.add(it) }
+                        item.foodImage?.let { foodImagesUri.add(it) }
+                        item.foodIngredient?.let { foodIngredients.add(it) }
+                        item.foodQuantity?.let { foodQuantities.add(it) }
+                            ?: foodQuantities.add(1) // Mặc định là 1 nếu null
+                    }
+                }
+                // Thông báo cho adapter rằng toàn bộ dữ liệu đã thay đổi
+                if (::cartAdapter.isInitialized) { // Kiểm tra adapter đã được khởi tạo chưa
+                    cartAdapter.notifyDataSetChanged()
+                } else {
+                    Log.w("CartFragment", "Adapter chưa được khởi tạo khi onDataChange được gọi.")
+                }
+                // Cập nhật tổng tiền nếu có
+                // calculateTotalPrice()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(requireContext(), "Lỗi khi lấy dữ liệu", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Lỗi khi lấy dữ liệu giỏ hàng: ${error.message}", Toast.LENGTH_LONG).show()
+                Log.e("CartFragment", "Firebase data fetch cancelled: ${error.message}")
             }
-        })
+        }
+        cartItemsRef.addValueEventListener(cartValueEventListener!!) // Sử dụng addValueEventListener
     }
 
-    companion object {
+    private fun getOrderItemsDetail() {
+        // Hàm này cần được xem xét lại.
+        // Dữ liệu đã có trong các list foodNames, foodPrices,... và foodQuantities đã được cập nhật
+        // bởi cartAdapter.getUpdatedQuantities() sẽ lấy số lượng từ adapter (đã được cập nhật khi +/-).
+        // Tuy nhiên, nếu bạn muốn chắc chắn lấy dữ liệu mới nhất từ Firebase trước khi đặt hàng,
+        // thì cách hiện tại là đúng, nhưng nó sẽ tạo ra các list mới.
+
+        // Cách 1: Sử dụng dữ liệu đã có trong Fragment (được cập nhật bởi addValueEventListener)
+        // và số lượng từ adapter.
+        val currentFoodNames = ArrayList(this.foodNames)
+        val currentFoodPrices = ArrayList(this.foodPrices)
+        val currentFoodImages = ArrayList(this.foodImagesUri)
+        val currentFoodDescriptions = ArrayList(this.foodDescriptions)
+        val currentFoodIngredients = ArrayList(this.foodIngredients)
+        val currentFoodQuantities = cartAdapter.getUpdatedQuantities() // Lấy số lượng đã cập nhật từ adapter
+
+        // Kiểm tra xem các list có cùng kích thước không, đặc biệt là quantities
+        if (currentFoodNames.size == currentFoodQuantities.size) {
+            orderNow(
+                currentFoodNames,
+                currentFoodPrices,
+                currentFoodImages,
+                currentFoodDescriptions,
+                currentFoodIngredients,
+                currentFoodQuantities
+            )
+        } else {
+            Toast.makeText(requireContext(), "Lỗi dữ liệu giỏ hàng, vui lòng thử lại.", Toast.LENGTH_SHORT).show()
+            Log.e("CartFragment", "Mismatch in list sizes when getting order details. Names: ${currentFoodNames.size}, Quantities: ${currentFoodQuantities.size}")
+            // Có thể gọi lại retrieveCartItems để đồng bộ lại nếu cần
+        }
+
+
+        // Cách 2: Lấy lại từ Firebase (như code cũ của bạn) - đảm bảo mới nhất nhưng có thể không cần thiết nếu dùng addValueEventListener
+        /*
+        val orderDetailsRef = database.reference.child("users").child(userId).child("CartItems")
+        val newFoodName = mutableListOf<String>()
+        val newFoodPrice = mutableListOf<String>()
+        val newFoodImage = mutableListOf<String>()
+        val newFoodDescription = mutableListOf<String>()
+        val newFoodIngredient = mutableListOf<String>()
+        // Lấy số lượng đã được cập nhật từ adapter là đúng
+        val updatedFoodQuantities = cartAdapter.getUpdatedQuantities()
+        var quantityIndex = 0
+
+        orderDetailsRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for(foodSnapshot in snapshot.children){
+                    val orderItem = foodSnapshot.getValue(CartItems::class.java)
+                    orderItem?.foodName?.let { newFoodName.add(it) }
+                    orderItem?.foodPrice?.let { newFoodPrice.add(it) }
+                    orderItem?.foodDescription?.let { newFoodDescription.add(it) }
+                    orderItem?.foodImage?.let { newFoodImage.add(it) }
+                    orderItem?.foodIngredient?.let { newFoodIngredient.add(it) }
+                    // Số lượng sẽ được lấy từ updatedFoodQuantities đã có
+                }
+                // Đảm bảo số lượng item khớp với số lượng quantities
+                if (newFoodName.size == updatedFoodQuantities.size) {
+                     orderNow(newFoodName, newFoodPrice, newFoodImage, newFoodDescription, newFoodIngredient, updatedFoodQuantities)
+                } else {
+                    Toast.makeText(requireContext(), "Lỗi đồng bộ số lượng, vui lòng thử lại.", Toast.LENGTH_SHORT).show()
+                     Log.e("CartFragment", "Order details item count mismatch with quantities from adapter.")
+                }
+            }
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(requireContext(), "Đặt hàng thất bại. Vui lòng thử lại!", Toast.LENGTH_SHORT).show()
+            }
+        })
+        */
     }
+
+
+    private fun orderNow(
+        foodNames: MutableList<String>,
+        foodPrices: MutableList<String>,
+        foodImages: MutableList<String>,
+        foodDescriptions: MutableList<String>,
+        foodIngredients: MutableList<String>,
+        foodQuantities: MutableList<Int>
+    ) {
+        if (isAdded && context != null) {
+            val intent = Intent(requireContext(), PayOutActivity::class.java)
+            intent.putStringArrayListExtra("foodItemName", ArrayList(foodNames))
+            intent.putStringArrayListExtra("foodItemPrice", ArrayList(foodPrices))
+            intent.putStringArrayListExtra("foodItemImage", ArrayList(foodImages))
+            intent.putStringArrayListExtra("foodItemDescription", ArrayList(foodDescriptions))
+            intent.putStringArrayListExtra("foodItemIngredient", ArrayList(foodIngredients))
+            intent.putIntegerArrayListExtra("foodItemQuantities", ArrayList(foodQuantities))
+            startActivity(intent)
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        // Quan trọng: Gỡ bỏ listener khi Fragment bị hủy view để tránh memory leak
+        if (cartValueEventListener != null && ::cartItemsRef.isInitialized) {
+            cartItemsRef.removeEventListener(cartValueEventListener!!)
+        }
+    }
+
+    // companion object {} // Không cần thiết nếu không có gì đặc biệt
 }
