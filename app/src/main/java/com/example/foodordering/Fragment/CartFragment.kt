@@ -166,43 +166,6 @@ class CartFragment : Fragment() {
             // Có thể gọi lại retrieveCartItems để đồng bộ lại nếu cần
         }
 
-
-        // Cách 2: Lấy lại từ Firebase (như code cũ của bạn) - đảm bảo mới nhất nhưng có thể không cần thiết nếu dùng addValueEventListener
-        /*
-        val orderDetailsRef = database.reference.child("users").child(userId).child("CartItems")
-        val newFoodName = mutableListOf<String>()
-        val newFoodPrice = mutableListOf<String>()
-        val newFoodImage = mutableListOf<String>()
-        val newFoodDescription = mutableListOf<String>()
-        val newFoodIngredient = mutableListOf<String>()
-        // Lấy số lượng đã được cập nhật từ adapter là đúng
-        val updatedFoodQuantities = cartAdapter.getUpdatedQuantities()
-        var quantityIndex = 0
-
-        orderDetailsRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                for(foodSnapshot in snapshot.children){
-                    val orderItem = foodSnapshot.getValue(CartItems::class.java)
-                    orderItem?.foodName?.let { newFoodName.add(it) }
-                    orderItem?.foodPrice?.let { newFoodPrice.add(it) }
-                    orderItem?.foodDescription?.let { newFoodDescription.add(it) }
-                    orderItem?.foodImage?.let { newFoodImage.add(it) }
-                    orderItem?.foodIngredient?.let { newFoodIngredient.add(it) }
-                    // Số lượng sẽ được lấy từ updatedFoodQuantities đã có
-                }
-                // Đảm bảo số lượng item khớp với số lượng quantities
-                if (newFoodName.size == updatedFoodQuantities.size) {
-                     orderNow(newFoodName, newFoodPrice, newFoodImage, newFoodDescription, newFoodIngredient, updatedFoodQuantities)
-                } else {
-                    Toast.makeText(requireContext(), "Lỗi đồng bộ số lượng, vui lòng thử lại.", Toast.LENGTH_SHORT).show()
-                     Log.e("CartFragment", "Order details item count mismatch with quantities from adapter.")
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(requireContext(), "Đặt hàng thất bại. Vui lòng thử lại!", Toast.LENGTH_SHORT).show()
-            }
-        })
-        */
     }
 
 
