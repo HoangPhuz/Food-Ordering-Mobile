@@ -19,7 +19,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pendingOrdersRecyclerView"
@@ -27,10 +27,11 @@
         android:layout_height="0dp"
         android:layout_marginTop="8dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.45"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvPendingConfirmationLabel"
-        app:layout_constraintHeight_percent="0.45"
-        tools:listitem="@layout/pending_order_item" />
+        tools:listitem="@layout/pending_order_item"/>
+
     <TextView
         android:id="@+id/tvOrderHistoryLabel"
         android:layout_width="wrap_content"
@@ -43,7 +44,7 @@
         android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/pendingOrdersRecyclerView" />
+        app:layout_constraintTop_toBottomOf="@+id/pendingOrdersRecyclerView"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/previousOrdersRecyclerView"
@@ -54,18 +55,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tvOrderHistoryLabel"
-        tools:listitem="@layout/buy_again_item" />
+        tools:listitem="@layout/buy_again_item"/>
+
     <TextView
-        android:layout_marginTop="25dp"
         android:id="@+id/tvNoPendingOrders"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="25dp"
         android:text="Không có đơn hàng nào chờ xác nhận."
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@+id/pendingOrdersRecyclerView"
         app:layout_constraintBottom_toBottomOf="@+id/pendingOrdersRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/pendingOrdersRecyclerView"
         app:layout_constraintStart_toStartOf="@+id/pendingOrdersRecyclerView"
-        app:layout_constraintEnd_toEndOf="@+id/pendingOrdersRecyclerView"/>
+        app:layout_constraintTop_toTopOf="@+id/pendingOrdersRecyclerView"/>
 
     <TextView
         android:id="@+id/tvNoPreviousOrders"
@@ -73,9 +75,9 @@
         android:layout_height="wrap_content"
         android:text="Chưa có lịch sử mua hàng."
         android:visibility="gone"
-        app:layout_constraintTop_toTopOf="@+id/previousOrdersRecyclerView"
         app:layout_constraintBottom_toBottomOf="@+id/previousOrdersRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/previousOrdersRecyclerView"
         app:layout_constraintStart_toStartOf="@+id/previousOrdersRecyclerView"
-        app:layout_constraintEnd_toEndOf="@+id/previousOrdersRecyclerView"/>
+        app:layout_constraintTop_toTopOf="@+id/previousOrdersRecyclerView"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

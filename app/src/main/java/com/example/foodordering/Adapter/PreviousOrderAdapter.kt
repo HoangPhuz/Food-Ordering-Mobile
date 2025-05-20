@@ -3,22 +3,27 @@ package com.example.foodordering.Adapter
 import android.content.Context
 import android.net.Uri
 import android.view.LayoutInflater
+import android.view.View // Thêm import này
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.foodordering.Model.OrderDetails
+import com.example.foodordering.Model.OrderDetails // Đảm bảo model OrderDetails là data class
 import com.example.foodordering.R
-import com.example.foodordering.databinding.BuyAgainItemBinding // Sử dụng layout item cũ
+import com.example.foodordering.databinding.BuyAgainItemBinding
+import java.text.SimpleDateFormat // Thêm import này
+import java.util.Date // Thêm import này
+import java.util.Locale // Thêm import này
 
 class PreviousOrderAdapter(
     private val context: Context,
-    private var previousOrders: MutableList<OrderDetails>,
     private val listener: OnItemInteractionListener
-) : RecyclerView.Adapter<PreviousOrderAdapter.BuyAgainViewHolder>() {
+) : ListAdapter<OrderDetails, PreviousOrderAdapter.BuyAgainViewHolder>(OrderDetailsDiffCallback()) {
 
     interface OnItemInteractionListener {
-        fun onBuyAgainClicked(orderDetails: OrderDetails, position: Int)
-        fun onItemClicked(orderDetails: OrderDetails) // Để xem chi tiết đơn hàng
+        fun onBuyAgainClicked(orderDetails: OrderDetails)
+        fun onItemClicked(orderDetails: OrderDetails)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BuyAgainViewHolder {
@@ -27,33 +32,8 @@ class PreviousOrderAdapter(
     }
 
     override fun onBindViewHolder(holder: BuyAgainViewHolder, position: Int) {
-        val order = previousOrders[position]
+        val order = getItem(position)
         holder.bind(order)
-    }
-
-    override fun getItemCount(): Int = previousOrders.size
-
-    fun removeItem(position: Int) {
-        if (position >= 0 && position < previousOrders.size) {
-            previousOrders.removeAt(position)
-            notifyItemRemoved(position)
-            notifyItemRangeChanged(position, previousOrders.size)
-        }
-    }
-
-    fun addItem(order: OrderDetails) {
-        // Thêm vào đầu danh sách để đơn mới nhất (vừa được xác nhận) lên trên
-        previousOrders.add(0, order)
-        notifyItemInserted(0)
-        notifyItemRangeChanged(0, previousOrders.size) // Cập nhật vị trí cho các item khác
-    }
-
-
-    fun updateList(newList: List<OrderDetails>) {
-        val itemsToActuallyAdd = ArrayList(newList)
-        this.previousOrders.clear()
-        this.previousOrders.addAll(itemsToActuallyAdd)
-        notifyDataSetChanged()
     }
 
     inner class BuyAgainViewHolder(private val binding: BuyAgainItemBinding) :
@@ -63,30 +43,50 @@ class PreviousOrderAdapter(
             binding.buyAgainFoodButton.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    listener.onBuyAgainClicked(previousOrders[position], position)
+                    listener.onBuyAgainClicked(getItem(position))
                 }
             }
-            binding.root.setOnClickListener{
+            binding.root.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    listener.onItemClicked(previousOrders[position])
+                    listener.onItemClicked(getItem(position))
                 }
             }
         }
 
         fun bind(order: OrderDetails) {
-            // Hiển thị tên các món ăn, có thể chỉ là món đầu tiên hoặc nối chuỗi
             binding.buyAgainFoodName.text = order.foodNames?.firstOrNull() ?: "Không có tên"
-            binding.buyAgainFoodPrice.text = order.foodPrices?.firstOrNull() ?: "0đ" // Giá món đầu tiên
+            binding.buyAgainFoodPrice.text = order.foodPrices?.firstOrNull() ?: "0đ"
 
-            // Lấy ảnh của món đầu tiên làm đại diện
             val imageUrl = order.foodImages?.firstOrNull()
-            if (imageUrl != null) {
-                val uri = Uri.parse(imageUrl)
-                Glide.with(context).load(uri).into(binding.buyAgainFoodImage)
+            if (imageUrl != null && imageUrl.isNotEmpty()) {
+                Glide.with(context).load(Uri.parse(imageUrl)).into(binding.buyAgainFoodImage)
             } else {
                 binding.buyAgainFoodImage.setImageResource(R.drawable.menu2) // Ảnh mặc định
             }
+
+            // Hiển thị ngày đặt hàng
+            // Giả sử trong buy_again_item.xml bạn có TextView với id là tvOrderDate
+            if (binding.root.findViewById<View>(R.id.tvOrderDate) != null) { // Kiểm tra xem tvOrderDate có tồn tại không
+                if (order.currentTime > 0) {
+                    val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
+                    binding.tvOrderDate.text = "Đặt lúc: ${sdf.format(Date(order.currentTime))}"
+                    binding.tvOrderDate.visibility = View.VISIBLE
+                } else {
+                    binding.tvOrderDate.text = "Ngày không xác định"
+                    binding.tvOrderDate.visibility = View.VISIBLE // Hoặc GONE nếu không muốn hiển thị
+                }
+            }
+        }
+    }
+
+    class OrderDetailsDiffCallback : DiffUtil.ItemCallback<OrderDetails>() {
+        override fun areItemsTheSame(oldItem: OrderDetails, newItem: OrderDetails): Boolean {
+            return oldItem.itemPushKey == newItem.itemPushKey
+        }
+
+        override fun areContentsTheSame(oldItem: OrderDetails, newItem: OrderDetails): Boolean {
+            return oldItem == newItem
         }
     }
 }

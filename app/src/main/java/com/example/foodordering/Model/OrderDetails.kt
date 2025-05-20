@@ -1,71 +1,83 @@
-package com.example.foodordering.Model
+package com.example.foodordering.Model // Hoặc package của app Admin: com.example.adminfoodordering.model
 
 import android.os.Parcel
 import android.os.Parcelable
 import java.io.Serializable
-import java.util.ArrayList
+import java.util.ArrayList // Cần thiết cho Parcelable lists
 
-class OrderDetails():Serializable {
-    var userUid: String?=null
-    var userName: String?=null
-    var foodNames: MutableList<String>?=null
-    var foodQuantities: MutableList<Int>?=null
-    var foodPrices: MutableList<String>?=null
-    var foodImages: MutableList<String>?=null
-    var address: String?=null
-    var totalPrice: String?=null
-    var phoneNumber: String?=null
-    var orderAccepted: Boolean = false
-    var paymentReceived: Boolean = false
-    var itemPushKey: String?=null
-    var currentTime: Long = 0
+// Chuyển thành data class
+data class OrderDetails(
+    var userUid: String? = null,
+    var userName: String? = null,
+    var foodNames: MutableList<String>? = null,
+    var foodQuantities: MutableList<Int>? = null,
+    var foodPrices: MutableList<String>? = null,
+    var foodImages: MutableList<String>? = null,
+    var address: String? = null,
+    var totalPrice: String? = null,
+    var phoneNumber: String? = null,
+    var orderAccepted: Boolean = false,
+    var paymentReceived: Boolean = false,
+    var itemPushKey: String? = null,
+    var currentTime: Long = 0,
+    var orderDispatched: Boolean = false // TRƯỜNG MỚI THỰC SỰ
+) : Serializable, Parcelable {
 
-    constructor(parcel: Parcel) : this() {
-        userUid = parcel.readString()
-        userName = parcel.readString()
-        address = parcel.readString()
-        totalPrice = parcel.readString()
-        phoneNumber = parcel.readString()
-        orderAccepted = parcel.readByte() != 0.toByte()
-        paymentReceived = parcel.readByte() != 0.toByte()
-        itemPushKey = parcel.readString()
-        currentTime = parcel.readLong()
-    }
+    // Constructor không tham số cho Firebase (data class tự tạo nếu tất cả thuộc tính có giá trị mặc định,
+    // nhưng để rõ ràng và nếu có logic phức tạp hơn, bạn có thể định nghĩa tường minh)
+    constructor() : this(
+        null, null, null, null, null, null, null, null, null,
+        false, false, null, 0L, false
+    )
 
-    constructor(
-        userId: String,
-        name: String,
-        foodItemName: ArrayList<String>,
-        foodItemQuantities: ArrayList<Int>,
-        foodItemPrice: ArrayList<String>,
-        foodItemImage: ArrayList<String>,
-        address: String,
-        totalAmount: String,
-        phone: String,
-        b: Boolean,
-        b1: Boolean,
-        itemPushKey: String?,
-        time: Long
-    ) : this(){
-        this.userUid = userId
-        this.userName = name
-        this.foodNames = foodItemName
-        this.foodQuantities = foodItemQuantities
-        this.foodPrices = foodItemPrice
-        this.foodImages = foodItemImage
-        this.address = address
-        this.totalPrice = totalAmount
-        this.phoneNumber = phone
-        this.orderAccepted = b
-        this.paymentReceived = b1
-        this.itemPushKey = itemPushKey
-        this.currentTime = time
-    }
+    // Constructor cho Parcelable
+    constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
+        parcel.createStringArrayList(),
+        mutableListOf<Int>().apply {
+            val size = parcel.readInt()
+            if (size != -1) {
+                for (i in 0 until size) {
+                    add(parcel.readInt())
+                }
+            } else {
+                // Nếu size là -1, danh sách là null, nhưng vì foodQuantities là MutableList<Int>?
+                // và chúng ta đã khởi tạo nó trong this(), chúng ta có thể để nó là emptyList()
+                // hoặc xử lý null nếu logic của bạn cho phép foodQuantities là null hoàn toàn.
+                // Để đơn giản, nếu size là -1, ta sẽ không thêm gì, nó sẽ là empty list.
+                // Nếu bạn muốn nó thực sự là null, bạn cần thay đổi logic khởi tạo.
+            }
+        },
+        parcel.createStringArrayList(),
+        parcel.createStringArrayList(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readByte() != 0.toByte(),
+        parcel.readByte() != 0.toByte(),
+        parcel.readString(),
+        parcel.readLong(),
+        parcel.readByte() != 0.toByte() // Đọc orderDispatched
+    )
 
-
-    fun writeToParcel(parcel: Parcel, flags: Int) {
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(userUid)
         parcel.writeString(userName)
+        parcel.writeStringList(foodNames)
+
+        // Ghi MutableList<Int> (foodQuantities)
+        if (foodQuantities != null) {
+            parcel.writeInt(foodQuantities!!.size)
+            for (quantity in foodQuantities!!) {
+                parcel.writeInt(quantity)
+            }
+        } else {
+            parcel.writeInt(-1) // Đánh dấu là null hoặc empty
+        }
+
+        parcel.writeStringList(foodPrices)
+        parcel.writeStringList(foodImages)
         parcel.writeString(address)
         parcel.writeString(totalPrice)
         parcel.writeString(phoneNumber)
@@ -73,9 +85,10 @@ class OrderDetails():Serializable {
         parcel.writeByte(if (paymentReceived) 1 else 0)
         parcel.writeString(itemPushKey)
         parcel.writeLong(currentTime)
+        parcel.writeByte(if (orderDispatched) 1 else 0) // Ghi orderDispatched
     }
 
-    fun describeContents(): Int {
+    override fun describeContents(): Int {
         return 0
     }
 
@@ -88,6 +101,4 @@ class OrderDetails():Serializable {
             return arrayOfNulls(size)
         }
     }
-
-
 }
