@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.foodordering.Model.UserModel
+import com.example.foodordering.Service.MyFirebaseMessagingService
 import com.example.foodordering.databinding.ActivityLoginBinding
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
@@ -20,6 +21,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.database
+import com.google.firebase.messaging.FirebaseMessaging
 
 class LoginActivity : AppCompatActivity() {
     private val userName: String? = null
@@ -131,18 +133,40 @@ class LoginActivity : AppCompatActivity() {
         auth.signInWithEmailAndPassword(email, password).addOnCompleteListener { task ->
             if (task.isSuccessful) {
                 val user = auth.currentUser
+                onLoginSuccess()
                 updateUI(user)
             } else {
                 auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         saveUserToDatabase()
                         val user: FirebaseUser? = auth.currentUser
+                        onLoginSuccess()
                         updateUI(user)
                     } else {
                         Toast.makeText(this, "Đăng nhập thất bại", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
+        }
+    }
+
+    private fun onLoginSuccess() {
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("LoginAction", "Fetching FCM registration token failed", task.exception)
+                return@addOnCompleteListener
+            }
+            // Lấy token mới hoặc token hiện tại
+            val token = task.result
+            Log.d("LoginAction", "Current FCM Token after login: $token")
+
+            // Gọi hàm static (nếu bạn tạo nó là static) hoặc một cách nào đó để
+            // gọi logic lưu token.
+            // Nếu sendUserFCMTokenToDatabase không phải là static, bạn cần một cơ chế khác.
+            // Tuy nhiên, với cách bạn viết (trong companion object hoặc là top-level function nếu chuyển ra),
+            // bạn có thể gọi nó.
+            // Giả sử bạn tạo một companion object trong MyFirebaseMessagingService:
+            MyFirebaseMessagingService.sendUserFCMTokenToDatabase(token) // Nếu bạn đã tạo companion object và hàm static
         }
     }
 
@@ -159,6 +183,7 @@ class LoginActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             Log.d("Login", "Current user: ${currentUser.uid}")
+            onLoginSuccess()
             updateUI(currentUser)
         }
     }

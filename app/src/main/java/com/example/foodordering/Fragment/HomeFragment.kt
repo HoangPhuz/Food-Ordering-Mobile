@@ -32,7 +32,6 @@ class HomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -85,10 +84,7 @@ class HomeFragment : Fragment() {
        val index = menuItems.indices.toList().shuffled()
         val numItemsToShow = 6
         val subsetMenuItems = index.take(numItemsToShow).map { menuItems[it] }
-
         setPopularItemsAdapter(subsetMenuItems)
-
-
     }
 
     private fun setPopularItemsAdapter(subsetMenuItems: List<MenuItem>) {

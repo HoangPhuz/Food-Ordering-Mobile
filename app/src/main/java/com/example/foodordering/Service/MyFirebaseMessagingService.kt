@@ -1,26 +1,23 @@
-package com.example.foodordering.Service // Hoặc package phù hợp
+package com.example.foodordering.Service // Hoặc package của bạn
 
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.content.Intent
+import android.media.RingtoneManager
+import android.os.Build
 import android.util.Log
-import com.example.foodordering.Model.NotificationData
-import com.example.foodordering.R
-import com.example.foodordering.ViewModel.NotificationViewModel // Cần cách để truy cập ViewModel
+import androidx.core.app.NotificationCompat
+import com.example.foodordering.MainActivity // Activity sẽ mở khi nhấn vào thông báo
+import com.example.foodordering.R // Chứa icon của bạn
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.FirebaseDatabase
+// import com.example.foodordering.Model.NotificationData // Bạn có thể dùng để cấu trúc dữ liệu
+// import com.example.foodordering.ViewModel.NotificationViewModel // Không cần thiết cho chỉ hiển thị system notification
+
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-
-// Quan trọng: Để truy cập ViewModel từ một Service (không có vòng đời UI trực tiếp),
-// bạn cần một cơ chế phù hợp. Các cách phổ biến:
-// 1. Singleton ViewModel (Không khuyến khích cho ViewModel có state UI).
-// 2. Sử dụng một Repository làm trung gian, Service ghi vào Repository, ViewModel đọc từ Repository.
-// 3. Gửi Local Broadcast từ Service, Activity/Fragment lắng nghe và cập nhật ViewModel.
-// 4. Sử dụng Dependency Injection (Hilt, Koin) để inject một đối tượng có thể giao tiếp với ViewModel.
-
-// Ví dụ này sẽ sử dụng một cách đơn giản hóa để minh họa,
-// nhưng trong ứng dụng thực tế, hãy cân nhắc các giải pháp kiến trúc tốt hơn.
-// Giả sử bạn có một cách để lấy instance của NotificationViewModel, ví dụ qua một Singleton (KHÔNG KHUYẾN KHÍCH):
-object ViewModelLocator {
-    var notificationViewModel: NotificationViewModel? = null
-}
-
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -28,61 +25,109 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
-
         Log.d(TAG, "From: ${remoteMessage.from}")
 
-        // Kiểm tra xem message có chứa data payload không.
-        remoteMessage.data.isNotEmpty().let {
+        var notificationTitle: String? = null
+        var notificationBody: String? = null
+        // var imageType: String? = null // Nếu bạn gửi loại ảnh từ FCM
+
+        // Ưu tiên xử lý 'data' payload vì nó luôn được gửi đến onMessageReceived
+        // ngay cả khi app ở foreground hoặc background.
+        if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: " + remoteMessage.data)
-            // Xử lý data payload ở đây.
-            // Ví dụ: lấy title, body, image_type từ remoteMessage.data
-            val title = remoteMessage.data["title"] ?: "Thông báo"
-            val body = remoteMessage.data["body"] ?: "Bạn có thông báo mới."
-            val imageType = remoteMessage.data["image_type"] // Ví dụ: "order_success", "promo"
-
-            // Tạo NotificationData
-            val imageResId = when (imageType) {
-                "order_success" -> R.drawable.congrats // Thay bằng icon thực tế của bạn
-                "order_driver" -> R.drawable.truck   // Thay bằng icon thực tế của bạn
-                "order_cancelled" -> R.drawable.sademoji // Thay bằng icon thực tế của bạn
-                // Thêm các trường hợp khác nếu cần
-                else -> null // Không có ảnh hoặc ảnh mặc định
-            }
-
-            val newNotification = NotificationData(
-                title = title,
-                message = body,
-                imageResId = imageResId
-            )
-
-            // Gửi thông báo này đến ViewModel để cập nhật UI
-            // CẢNH BÁO: Đoạn code dưới đây sử dụng ViewModelLocator là một cách đơn giản hóa.
-            // Trong ứng dụng lớn, hãy sử dụng Repository, EventBus, hoặc DI.
-            ViewModelLocator.notificationViewModel?.addNotification(newNotification)
-
-            // Bạn cũng có thể hiển thị một System Notification ở đây nếu ứng dụng không mở
-            // hoặc nếu bạn muốn thông báo ngay cả khi BottomSheet không hiển thị.
-            // sendSystemNotification(title, body)
+            notificationTitle = remoteMessage.data["title"]
+            notificationBody = remoteMessage.data["body"]
+            // imageType = remoteMessage.data["image_type"]
+            // Bạn có thể lấy thêm các dữ liệu khác từ remoteMessage.data nếu Cloud Function gửi
+            // val orderId = remoteMessage.data["orderId"]
         }
 
-        // Kiểm tra xem message có chứa notification payload không.
-        // (Thường được xử lý tự động bởi FCM khi app ở background,
-        // nhưng bạn có thể tùy chỉnh nếu muốn)
+        // Nếu 'notification' payload cũng được gửi (thường FCM tự xử lý khi app ở background)
+        // bạn có thể lấy thông tin từ đó nếu 'data' payload không có.
         remoteMessage.notification?.let {
             Log.d(TAG, "Message Notification Body: ${it.body}")
-            // Nếu bạn muốn xử lý notification payload này theo cách riêng khi app ở foreground
-            // (ví dụ, không để FCM tự hiển thị mà dùng logic của bạn)
+            if (notificationTitle == null) notificationTitle = it.title
+            if (notificationBody == null) notificationBody = it.body
+        }
+
+        // Chỉ hiển thị thông báo nếu có nội dung
+        if (notificationTitle != null && notificationBody != null) {
+            sendSystemNotification(notificationTitle.toString(), notificationBody.toString())
+        } else {
+            Log.d(TAG, "Notification title or body is null. Not showing notification.")
         }
     }
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d(TAG, "Refreshed token: $token")
-        // Gửi token này lên server của bạn để có thể gửi thông báo đến thiết bị này.
-        // sendRegistrationToServer(token)
+        Log.d(TAG, "Refreshed token for User: $token")
+        sendUserFCMTokenToDatabase(token)
+    }
+    private fun sendUserFCMTokenToDatabase(token: String?) {
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+        if (userId != null && token != null) {
+            val tokenRef = FirebaseDatabase.getInstance().getReference("users")
+                .child(userId).child("fcmToken")
+            tokenRef.setValue(token)
+                .addOnSuccessListener { Log.d(TAG, "User FCM Token updated for $userId") }
+                .addOnFailureListener { e -> Log.e(TAG, "Failed to update User FCM Token: ${e.message}") }
+        }
     }
 
-    // private fun sendSystemNotification(title: String, messageBody: String) {
-    //     // Code để tạo và hiển thị một System Notification (sử dụng NotificationManagerCompat)
-    // }
+    private fun sendSystemNotification(title: String, messageBody: String) {
+        val intent = Intent(this, MainActivity::class.java) // Activity sẽ mở khi người dùng nhấn vào thông báo
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        // Tạo PendingIntent, đảm bảo requestCode là duy nhất nếu bạn có nhiều loại thông báo
+        // hoặc sử dụng FLAG_IMMUTABLE hoặc FLAG_MUTABLE tùy theo Android S (API 31+)
+        val pendingIntentFlag = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            PendingIntent.FLAG_ONE_SHOT or PendingIntent.FLAG_IMMUTABLE
+        } else {
+            PendingIntent.FLAG_ONE_SHOT
+        }
+        val pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent, pendingIntentFlag)
+
+        val channelId = getString(R.string.default_notification_channel_id) // Lấy từ strings.xml
+        val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+        val notificationBuilder = NotificationCompat.Builder(this, channelId)
+            .setSmallIcon(R.drawable.bell) // Thay bằng icon của bạn
+            .setContentTitle(title)
+            .setContentText(messageBody)
+            .setAutoCancel(true) // Tự động xóa thông báo khi người dùng nhấn vào
+            .setSound(defaultSoundUri)
+            .setPriority(NotificationCompat.PRIORITY_HIGH) // Ưu tiên cao để hiện head-up notification
+            .setContentIntent(pendingIntent)
+
+        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+        // Kể từ Android Oreo (API 26), Notification Channel là bắt buộc.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val channel = NotificationChannel(
+                channelId,
+                "Thông báo chung", // Tên channel hiển thị cho người dùng trong cài đặt app
+                NotificationManager.IMPORTANCE_HIGH // Mức độ quan trọng
+            )
+            notificationManager.createNotificationChannel(channel)
+        }
+
+        // Hiển thị thông báo. Sử dụng một ID thông báo duy nhất nếu bạn muốn cập nhật thông báo này sau
+        // hoặc nhiều ID khác nhau nếu muốn hiển thị nhiều thông báo riêng biệt.
+        notificationManager.notify(System.currentTimeMillis().toInt() /* ID thông báo, nên duy nhất */, notificationBuilder.build())
+    }
+    companion object { // <--- THÊM COMPANION OBJECT
+        private const val COMPANION_TAG = "UserFCMStatic" // TAG riêng cho companion
+
+        fun sendUserFCMTokenToDatabase(token: String?) {
+            val userId = FirebaseAuth.getInstance().currentUser?.uid
+            if (userId != null && token != null) {
+                val tokenRef = FirebaseDatabase.getInstance().getReference("users")
+                    .child(userId).child("fcmToken")
+                tokenRef.setValue(token)
+                    .addOnSuccessListener { Log.d(COMPANION_TAG, "User FCM Token updated for $userId") }
+                    .addOnFailureListener { e -> Log.e(COMPANION_TAG, "Failed to update User FCM Token for $userId: ${e.message}") }
+            } else {
+                Log.w(COMPANION_TAG, "Cannot send FCM token: User not logged in or token is null.")
+            }
+        }
+    }
 }

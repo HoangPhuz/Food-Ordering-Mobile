@@ -17,8 +17,6 @@ class MenuAdapter(
     private val requireContext: Context)
     : RecyclerView.Adapter<MenuAdapter.MenuViewHolder>() {
 
-
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MenuViewHolder {
         val binding = MenuItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return MenuViewHolder(binding)
@@ -31,7 +29,6 @@ class MenuAdapter(
     override fun getItemCount(): Int = menuItems.size
 
     inner class MenuViewHolder(private val binding: MenuItemBinding): RecyclerView.ViewHolder(binding.root) {
-
         init {
             binding.root.setOnClickListener {
                 val position = adapterPosition

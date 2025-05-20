@@ -51,6 +51,7 @@ class MenuBottomSheetFragment : BottomSheetDialogFragment() {
             }
         })
     }
+
     private fun setAdapters() {
         if(menuItems.isNotEmpty()){
             val adapter = MenuAdapter(menuItems, requireContext())
