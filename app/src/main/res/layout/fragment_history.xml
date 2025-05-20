@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,140 +7,75 @@
     android:background="@color/white"
     tools:context=".Fragment.HistoryFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tvPendingConfirmationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/patrick_hand"
+        android:text="Đơn hàng chờ xác nhận"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textView26"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/patrick_hand"
-            android:text="Đơn hàng gần đây"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pendingOrdersRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvPendingConfirmationLabel"
+        app:layout_constraintHeight_percent="0.45"
+        tools:listitem="@layout/pending_order_item" />
+    <TextView
+        android:id="@+id/tvOrderHistoryLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:fontFamily="@font/patrick_hand"
+        android:text="Lịch sử đơn hàng"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/pendingOrdersRecyclerView" />
 
-        <androidx.cardview.widget.CardView
-            android:id="@+id/cardView"
-            android:layout_width="match_parent"
-            android:layout_height="90dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            app:cardCornerRadius="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView26">
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/previousOrdersRecyclerView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvOrderHistoryLabel"
+        tools:listitem="@layout/buy_again_item" />
+    <TextView
+        android:layout_marginTop="25dp"
+        android:id="@+id/tvNoPendingOrders"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Không có đơn hàng nào chờ xác nhận."
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/pendingOrdersRecyclerView"
+        app:layout_constraintBottom_toBottomOf="@+id/pendingOrdersRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/pendingOrdersRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/pendingOrdersRecyclerView"/>
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/recentBuyItem"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/tvNoPreviousOrders"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Chưa có lịch sử mua hàng."
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@+id/previousOrdersRecyclerView"
+        app:layout_constraintBottom_toBottomOf="@+id/previousOrdersRecyclerView"
+        app:layout_constraintStart_toStartOf="@+id/previousOrdersRecyclerView"
+        app:layout_constraintEnd_toEndOf="@+id/previousOrdersRecyclerView"/>
 
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/cardBuyAgainFoodImage"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
-                    app:cardCornerRadius="15dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent">
-
-                    <ImageView
-                        android:id="@+id/buyAgainFoodImage"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:src="@drawable/menu2"
-                        android:scaleType="centerCrop"
-                        />
-
-                </androidx.cardview.widget.CardView>
-
-                <TextView
-                    android:id="@+id/buyAgainFoodName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:fontFamily="@font/patrick_hand"
-                    android:text="FoodName"
-                    android:textColor="@color/black"
-                    android:textSize="16sp"
-                    app:layout_constraintBottom_toTopOf="@+id/buyAgainFoodPrice"
-                    app:layout_constraintStart_toEndOf="@+id/cardBuyAgainFoodImage"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
-                <TextView
-                    android:id="@+id/buyAgainFoodPrice"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="@font/patrick_hand"
-                    android:text="10.000đ"
-                    android:textColor="@color/textColor"
-                    android:textSize="20sp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/buyAgainFoodName"
-                    app:layout_constraintTop_toBottomOf="@+id/buyAgainFoodName"/>
-
-                <androidx.cardview.widget.CardView
-                    android:id="@+id/orderStatus"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_marginEnd="32dp"
-                    app:cardBackgroundColor="#4CAF50"
-                    app:cardCornerRadius="20dp"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintVertical_bias="0.133"/>
-
-                <androidx.appcompat.widget.AppCompatButton
-                    android:id="@+id/receivedButton"
-                    android:layout_width="60dp"
-                    android:layout_height="20dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@drawable/addtocartshape"
-                    android:fontFamily="@font/patrick_hand"
-                    android:text="Đã nhận"
-                    android:visibility="invisible"
-                    android:textAllCaps="false"
-                    android:textColor="@color/white"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="@+id/orderStatus"
-                    app:layout_constraintStart_toStartOf="@+id/orderStatus"
-                    app:layout_constraintTop_toBottomOf="@+id/orderStatus"/>
-            </androidx.constraintlayout.widget.ConstraintLayout>
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:id="@+id/textView29"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:fontFamily="@font/patrick_hand"
-            android:text="Đơn hàng đã mua"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cardView"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/buyAgainRecyclerView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            tools:listitem="@layout/buy_again_item"
-            app:layout_constraintTop_toBottomOf="@+id/textView29"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

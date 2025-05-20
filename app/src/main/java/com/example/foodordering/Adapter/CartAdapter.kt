@@ -39,15 +39,6 @@ class CartAdapter(
         val userId = auth.currentUser?.uid ?: ""
         val database = FirebaseDatabase.getInstance().reference
         cartItemsReference = database.child("users").child(userId).child("CartItems")
-
-        // DÒNG GÂY LỖI ĐÃ BỊ XÓA/BÌNH LUẬN:
-        // database.child("user").child(userId).child("CartItems").removeValue()
-
-        // Đảm bảo cartQuantity có kích thước phù hợp với các danh sách khác.
-        // Lý tưởng nhất, việc này nên được xử lý trong CartFragment trước khi truyền vào adapter.
-        // Ví dụ: nếu cartQuantity được khởi tạo rỗng, bạn có thể muốn điền giá trị mặc định (ví dụ: 1)
-        // cho mỗi item, hoặc đảm bảo nó được điền đúng từ Firebase.
-        // Hiện tại, code đang giả định cartQuantity đã được truyền vào với kích thước và giá trị đúng.
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CartViewHolder {

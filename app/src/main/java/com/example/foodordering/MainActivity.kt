@@ -8,6 +8,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
+import com.example.foodordering.Fragment.NotificationBottomFragment
 import com.example.foodordering.databinding.ActivityMainBinding
 import com.google.android.material.bottomnavigation.BottomNavigationView
 

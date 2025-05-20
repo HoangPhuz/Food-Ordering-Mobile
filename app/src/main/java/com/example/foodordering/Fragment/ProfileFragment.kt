@@ -1,12 +1,15 @@
 package com.example.foodordering.Fragment
 
+import android.content.Intent
 import android.os.Bundle
 import android.os.UserManager
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.example.foodordering.LoginActivity
 import com.example.foodordering.Model.UserModel
 import com.example.foodordering.R
 import com.example.foodordering.databinding.FragmentProfileBinding
@@ -28,6 +31,19 @@ class ProfileFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
+        binding.logoutButton.setOnClickListener{
+            auth.signOut()
+            Log.d("logout", "User signed out") // Thay đổi log cho rõ ràng hơn
+
+            // Sử dụng requireContext() để lấy Context
+            val intent = Intent(requireContext(), LoginActivity::class.java)
+            // Thêm các flags để xóa stack Activity cũ và tạo task mới cho LoginActivity
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
+
+            // Gọi finish() trên Activity chứa Fragment này
+            activity?.finish()
+        }
         binding.saveInforButton.setOnClickListener {
             val name = binding.name.text.toString()
             val address = binding.address.text.toString()
