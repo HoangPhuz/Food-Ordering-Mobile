@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
-import android.view.View.OnClickListener
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -29,6 +28,21 @@ class MenuAdapter(
     override fun getItemCount(): Int = menuItems.size
 
     inner class MenuViewHolder(private val binding: MenuItemBinding): RecyclerView.ViewHolder(binding.root) {
+
+        //Set data vào RecyclerView
+        fun bind(position: Int) {
+            val menuItems = menuItems[position]
+            binding.apply {
+                menuFoodName.text=menuItems.foodName
+                menuPrice.text=menuItems.foodPrice
+                val Uri = Uri.parse(menuItems.foodImage)
+                Glide.with(requireContext)
+                    .load(Uri)
+                    .into(menuImage)
+            }
+        }
+
+
         init {
             binding.root.setOnClickListener {
                 val position = adapterPosition
@@ -54,20 +68,6 @@ class MenuAdapter(
 
         }
 
-        //Set data vào RecyclerView
-        fun bind(position: Int) {
-            val menuItems = menuItems[position]
-            binding.apply {
-                menuFoodName.text=menuItems.foodName
-                menuPrice.text=menuItems.foodPrice
-
-
-                val Uri = Uri.parse(menuItems.foodImage)
-                Glide.with(requireContext)
-                    .load(Uri)
-                    .into(menuImage)
-            }
-        }
 
     }
 

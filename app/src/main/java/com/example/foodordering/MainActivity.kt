@@ -8,9 +8,8 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.foodordering.Fragment.NotificationBottomFragment
 import com.example.foodordering.databinding.ActivityMainBinding
-import com.google.android.material.bottomnavigation.BottomNavigationView
+
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding : ActivityMainBinding
@@ -26,11 +25,7 @@ class MainActivity : AppCompatActivity() {
             insets
         }
         var NavController = findNavController(R.id.fragmentContainerView)
-        var bottomnav = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
+        var bottomnav = binding.bottomNavigationView
         bottomnav.setupWithNavController(NavController)
-        binding.notificationButton.setOnClickListener {
-            val bottomSheetFragment = NotificationBottomFragment()
-            bottomSheetFragment.show(supportFragmentManager, "Test")
-        }
     }
 }

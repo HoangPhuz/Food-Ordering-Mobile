@@ -30,16 +30,16 @@ class CartFragment : Fragment() {
     private lateinit var foodDescriptions: MutableList<String>
     private lateinit var foodImagesUri: MutableList<String>
     private lateinit var foodIngredients: MutableList<String>
-    private lateinit var foodQuantities: MutableList<Int> // Đổi tên cho nhất quán
+    private lateinit var foodQuantities: MutableList<Int>
     private lateinit var cartAdapter: CartAdapter
     private lateinit var userId: String
-    private lateinit var cartItemsRef: DatabaseReference // Thêm tham chiếu
-    private var cartValueEventListener: ValueEventListener? = null // Listener để có thể remove
+    private lateinit var cartItemsRef: DatabaseReference
+    private var cartValueEventListener: ValueEventListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View { // Nên trả về View, không phải View? nếu layout luôn được inflate
+    ): View {
         binding = FragmentCartBinding.inflate(inflater, container, false)
 
         auth = FirebaseAuth.getInstance()
@@ -52,12 +52,12 @@ class CartFragment : Fragment() {
             retrieveCartItems()
         } else {
             Toast.makeText(requireContext(), "Vui lòng đăng nhập để xem giỏ hàng.", Toast.LENGTH_LONG).show()
-            // Có thể xử lý ẩn RecyclerView hoặc hiển thị thông báo "chưa đăng nhập"
+
         }
 
 
         binding.proceedButton.setOnClickListener {
-            if (::cartAdapter.isInitialized && cartAdapter.itemCount > 0) { // Kiểm tra adapter và có item
+            if (::cartAdapter.isInitialized && cartAdapter.itemCount > 0) {
                 getOrderItemsDetail()
             } else {
                 Toast.makeText(requireContext(), "Giỏ hàng của bạn đang trống.", Toast.LENGTH_SHORT).show()
@@ -122,8 +122,7 @@ class CartFragment : Fragment() {
                 } else {
                     Log.w("CartFragment", "Adapter chưa được khởi tạo khi onDataChange được gọi.")
                 }
-                // Cập nhật tổng tiền nếu có
-                // calculateTotalPrice()
+
             }
 
             override fun onCancelled(error: DatabaseError) {
@@ -135,14 +134,7 @@ class CartFragment : Fragment() {
     }
 
     private fun getOrderItemsDetail() {
-        // Hàm này cần được xem xét lại.
-        // Dữ liệu đã có trong các list foodNames, foodPrices,... và foodQuantities đã được cập nhật
-        // bởi cartAdapter.getUpdatedQuantities() sẽ lấy số lượng từ adapter (đã được cập nhật khi +/-).
-        // Tuy nhiên, nếu bạn muốn chắc chắn lấy dữ liệu mới nhất từ Firebase trước khi đặt hàng,
-        // thì cách hiện tại là đúng, nhưng nó sẽ tạo ra các list mới.
 
-        // Cách 1: Sử dụng dữ liệu đã có trong Fragment (được cập nhật bởi addValueEventListener)
-        // và số lượng từ adapter.
         val currentFoodNames = ArrayList(this.foodNames)
         val currentFoodPrices = ArrayList(this.foodPrices)
         val currentFoodImages = ArrayList(this.foodImagesUri)
@@ -150,7 +142,7 @@ class CartFragment : Fragment() {
         val currentFoodIngredients = ArrayList(this.foodIngredients)
         val currentFoodQuantities = cartAdapter.getUpdatedQuantities() // Lấy số lượng đã cập nhật từ adapter
 
-        // Kiểm tra xem các list có cùng kích thước không, đặc biệt là quantities
+
         if (currentFoodNames.size == currentFoodQuantities.size) {
             orderNow(
                 currentFoodNames,
@@ -162,8 +154,8 @@ class CartFragment : Fragment() {
             )
         } else {
             Toast.makeText(requireContext(), "Lỗi dữ liệu giỏ hàng, vui lòng thử lại.", Toast.LENGTH_SHORT).show()
-            Log.e("CartFragment", "Mismatch in list sizes when getting order details. Names: ${currentFoodNames.size}, Quantities: ${currentFoodQuantities.size}")
-            // Có thể gọi lại retrieveCartItems để đồng bộ lại nếu cần
+            Log.e("CartFragment", "Kích thước danh sách không khớp khi lấy thông tin chi tiết về đơn hàng. Tên: ${currentFoodNames.size}, Số lượng: ${currentFoodQuantities.size}")
+
         }
 
     }
@@ -191,11 +183,11 @@ class CartFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        // Quan trọng: Gỡ bỏ listener khi Fragment bị hủy view để tránh memory leak
+
         if (cartValueEventListener != null && ::cartItemsRef.isInitialized) {
             cartItemsRef.removeEventListener(cartValueEventListener!!)
         }
     }
 
-    // companion object {} // Không cần thiết nếu không có gì đặc biệt
+
 }

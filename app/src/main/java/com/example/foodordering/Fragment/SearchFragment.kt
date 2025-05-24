@@ -88,7 +88,5 @@ class SearchFragment : Fragment() {
         setAdapter(filteredMenuItems)
     }
 
-    companion object {
 
-    }
 }

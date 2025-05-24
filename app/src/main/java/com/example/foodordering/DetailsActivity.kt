@@ -66,10 +66,8 @@ class DetailsActivity : AppCompatActivity() {
             return
         }
 
-        // Giả sử foodName, foodImage, foodPrice, foodDescription, foodIngredients là các thuộc tính
-        // của Activity/Fragment này và đã có giá trị.
-        // Đảm bảo chúng không null trước khi sử dụng.
-        val currentFoodName = foodName?.toString() // Lấy giá trị từ thuộc tính của class
+
+        val currentFoodName = foodName?.toString()
         if (currentFoodName.isNullOrEmpty()) {
             Toast.makeText(this, "Tên sản phẩm không hợp lệ", Toast.LENGTH_SHORT).show()
             return
@@ -77,8 +75,9 @@ class DetailsActivity : AppCompatActivity() {
 
         val cartItemsRef = databaseRef.child("users").child(userId).child("CartItems")
 
-        // 1. Truy vấn để tìm item hiện có với cùng foodName
+        //truy vấn để tìm item hiện có với cùng foodName
         val query = cartItemsRef.orderByChild("foodName").equalTo(currentFoodName)
+
 
         query.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -87,24 +86,24 @@ class DetailsActivity : AppCompatActivity() {
                     var itemFound = false
                     for (itemSnapshot in snapshot.children) {
                         val existingCartItem = itemSnapshot.getValue(CartItems::class.java)
-                        val itemKey = itemSnapshot.key // Lấy key của item hiện tại
+                        val itemKey = itemSnapshot.key //Lấy key của item hiện tại
 
                         if (existingCartItem != null && itemKey != null) {
                             val newQuantity = (existingCartItem.foodQuantity ?: 0) + 1
-                            // Cập nhật lại số lượng cho item đó
+                            //Cập nhật lại số lượng cho item đó
                             cartItemsRef.child(itemKey).child("foodQuantity").setValue(newQuantity)
                                 .addOnSuccessListener {
                                     Toast.makeText(this@DetailsActivity, "Đã cập nhật số lượng trong giỏ hàng", Toast.LENGTH_SHORT).show()
-                                    finish() // Hoặc cập nhật UI nếu cần
+                                    finish()
                                 }
                                 .addOnFailureListener {
                                     Toast.makeText(this@DetailsActivity, "Lỗi cập nhật số lượng", Toast.LENGTH_SHORT).show()
                                 }
                             itemFound = true
-                            break // Giả sử foodName là duy nhất, tìm thấy là dừng
+                            break
                         }
                     }
-                    if (!itemFound) { // Trường hợp hiếm: snapshot.exists() nhưng không lặp được item hợp lệ
+                    if (!itemFound) {
                         addNewItemToCart(cartItemsRef, currentFoodName)
                     }
                 } else {
@@ -120,21 +119,21 @@ class DetailsActivity : AppCompatActivity() {
         })
     }
 
-    // Hàm phụ trợ để thêm item mới, tránh lặp code
+
     private fun addNewItemToCart(cartItemsRef: DatabaseReference, currentFoodName: String) {
         val cartItem = CartItems(
             foodName = currentFoodName,
-            foodImage = foodImage?.toString(), // Lấy từ thuộc tính của class
-            foodPrice = foodPrice?.toString(), // Lấy từ thuộc tính của class
-            foodDescription = foodDescription?.toString(), // Lấy từ thuộc tính của class
-            foodIngredient = foodIngredients?.toString(), // Lấy từ thuộc tính của class
-            foodQuantity = 1 // Số lượng ban đầu là 1
+            foodImage = foodImage?.toString(),
+            foodPrice = foodPrice?.toString(),
+            foodDescription = foodDescription?.toString(),
+            foodIngredient = foodIngredients?.toString(),
+            foodQuantity = 1
         )
 
         cartItemsRef.push().setValue(cartItem)
             .addOnSuccessListener {
                 Toast.makeText(this@DetailsActivity, "Thêm vào giỏ hàng thành công", Toast.LENGTH_SHORT).show()
-                finish() // Hoặc cập nhật UI nếu cần
+                finish()
             }
             .addOnFailureListener {
                 Toast.makeText(this@DetailsActivity, "Thêm vào giỏ hàng thất bại", Toast.LENGTH_SHORT).show()

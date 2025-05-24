@@ -11,7 +11,6 @@ import com.denzcoskun.imageslider.constants.ScaleTypes
 import com.denzcoskun.imageslider.interfaces.ItemClickListener
 import com.denzcoskun.imageslider.models.SlideModel
 import com.example.foodordering.Adapter.MenuAdapter
-import com.example.foodordering.Adapter.PopularAdapter
 import com.example.foodordering.MenuBottomSheetFragment
 import com.example.foodordering.Model.MenuItem
 
@@ -96,7 +95,7 @@ class HomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val imageList = ArrayList<SlideModel>() // Create image list
+        val imageList = ArrayList<SlideModel>() //Image list
         imageList.add(SlideModel(R.drawable.banner1, ScaleTypes.FIT))
         imageList.add(SlideModel(R.drawable.banner2, ScaleTypes.FIT))
         imageList.add(SlideModel(R.drawable.banner3, ScaleTypes.FIT))
@@ -110,7 +109,7 @@ class HomeFragment : Fragment() {
 
             override fun onItemSelected(position: Int) {
                 val itemPosition = imageList[position]
-                val itemMessage = "Selected Image $position"
+                val itemMessage = "Đã chọn ảnh $position"
                 Toast.makeText(requireContext(), itemMessage, Toast.LENGTH_SHORT).show()
             }
         })

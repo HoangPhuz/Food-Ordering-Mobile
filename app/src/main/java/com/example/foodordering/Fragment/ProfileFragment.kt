@@ -33,15 +33,15 @@ class ProfileFragment : Fragment() {
         binding = FragmentProfileBinding.inflate(inflater, container, false)
         binding.logoutButton.setOnClickListener{
             auth.signOut()
-            Log.d("logout", "User signed out") // Thay đổi log cho rõ ràng hơn
+            Log.d("logout", "User signed out")
 
-            // Sử dụng requireContext() để lấy Context
+
             val intent = Intent(requireContext(), LoginActivity::class.java)
-            // Thêm các flags để xóa stack Activity cũ và tạo task mới cho LoginActivity
+
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
             startActivity(intent)
 
-            // Gọi finish() trên Activity chứa Fragment này
+
             activity?.finish()
         }
         binding.saveInforButton.setOnClickListener {
@@ -78,24 +78,18 @@ class ProfileFragment : Fragment() {
         if (userId != null) {
             val userRef = database.reference.child("users").child(userId)
 
-            // Tạo một Map chứa các trường bạn muốn cập nhật
+            // Tạo một Map chứa các trường cập nhật
             val userDataUpdates = hashMapOf<String, Any>(
                 "username" to name,
                 "address" to address,
                 "phone" to phone,
                 "email" to email
-                // Bạn có thể thêm các trường khác vào đây nếu cần cập nhật
-                // Ví dụ: nếu bạn chỉ muốn cập nhật tên và địa chỉ, Map sẽ là:
-                // "username" to name,
-                // "address" to address
             )
 
-            // Sử dụng updateChildren() thay vì setValue()
             userRef.updateChildren(userDataUpdates).addOnSuccessListener {
                 Toast.makeText(requireContext(), "Cập nhật thành công", Toast.LENGTH_SHORT).show()
             }.addOnFailureListener {
                 Toast.makeText(requireContext(), "Cập nhật thất bại: ${it.message}", Toast.LENGTH_LONG).show()
-                // Log lỗi để debug dễ hơn
                 Log.e("ProfileFragment", "Lỗi cập nhật dữ liệu người dùng", it)
             }
         } else {

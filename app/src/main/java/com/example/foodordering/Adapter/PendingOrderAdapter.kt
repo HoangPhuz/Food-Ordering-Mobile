@@ -29,8 +29,6 @@ class PendingOrderAdapter( // Đảm bảo đây là adapter cho User
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PendingOrderViewHolder {
-        // Đảm bảo bạn đang dùng đúng layout item cho User app
-        // Tên binding có thể khác (ví dụ: UserPendingOrderItemBinding)
         val binding = PendingOrderItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return PendingOrderViewHolder(binding)
     }
@@ -40,11 +38,14 @@ class PendingOrderAdapter( // Đảm bảo đây là adapter cho User
         holder.bind(order)
     }
 
+
+
+
     inner class PendingOrderViewHolder(private val binding: PendingOrderItemBinding) : // Sử dụng đúng binding
         RecyclerView.ViewHolder(binding.root) {
 
         init {
-            binding.receivedButton.setOnClickListener { // Giả sử nút trong layout của User là 'receivedButton'
+            binding.receivedButton.setOnClickListener {
                 val position = adapterPosition
                 if (position != RecyclerView.NO_POSITION) {
                     val order = getItem(position)
@@ -62,13 +63,11 @@ class PendingOrderAdapter( // Đảm bảo đây là adapter cho User
         }
 
         fun bind(order: OrderDetails) {
-            // Giả sử binding của User có các ID tương ứng
             binding.foodName.text = order.foodNames?.joinToString(", ") ?: "N/A"
             binding.foodPrice.text = order.totalPrice ?: "0đ"
 
             val imageUrl = order.foodImages?.firstOrNull()
-            if (imageUrl != null) {
-                Glide.with(context).load(Uri.parse(imageUrl)).into(binding.foodImage)
+            if (imageUrl != null) {Glide.with(context).load(Uri.parse(imageUrl)).into(binding.foodImage)
             } else {
                 binding.foodImage.setImageResource(R.drawable.menu2) // Ảnh mặc định
             }
@@ -81,16 +80,15 @@ class PendingOrderAdapter( // Đảm bảo đây là adapter cho User
             }
 
             // Xử lý trạng thái nút "Đã nhận"
-            if (order.orderAccepted && !order.paymentReceived) { // Điều kiện cơ bản để hiển thị nút
+            if (order.orderAccepted && !order.paymentReceived) {
                 binding.receivedButton.visibility = View.VISIBLE
                 if (order.orderDispatched) {
                     binding.receivedButton.isEnabled = true
-                    binding.receivedButton.alpha = 1.0f // Bình thường
-                    // binding.receivedButton.text = "Đã nhận hàng" // Hoặc giữ nguyên
+                    binding.receivedButton.alpha = 1.0f
+
                 } else {
                     binding.receivedButton.isEnabled = false
                     binding.receivedButton.alpha = 0.5f // Làm mờ nút
-                    // binding.receivedButton.text = "Chờ gửi hàng" // Hoặc thông báo khác
                 }
             } else {
                 binding.receivedButton.visibility = View.GONE // Ẩn nếu đã nhận hoặc chưa chấp nhận
@@ -104,7 +102,7 @@ class PendingOrderAdapter( // Đảm bảo đây là adapter cho User
         }
 
         override fun areContentsTheSame(oldItem: OrderDetails, newItem: OrderDetails): Boolean {
-            return oldItem == newItem // So sánh toàn bộ object, đảm bảo OrderDetails có data class hoặc equals/hashCode đúng
+            return oldItem == newItem
         }
     }
 }

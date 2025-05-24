@@ -66,15 +66,14 @@ class PreviousOrderAdapter(
             }
 
             // Hiển thị ngày đặt hàng
-            // Giả sử trong buy_again_item.xml bạn có TextView với id là tvOrderDate
-            if (binding.root.findViewById<View>(R.id.tvOrderDate) != null) { // Kiểm tra xem tvOrderDate có tồn tại không
+            if (binding.root.findViewById<View>(R.id.tvOrderDate) != null) {
                 if (order.currentTime > 0) {
                     val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
                     binding.tvOrderDate.text = "Đặt lúc: ${sdf.format(Date(order.currentTime))}"
                     binding.tvOrderDate.visibility = View.VISIBLE
                 } else {
                     binding.tvOrderDate.text = "Ngày không xác định"
-                    binding.tvOrderDate.visibility = View.VISIBLE // Hoặc GONE nếu không muốn hiển thị
+                    binding.tvOrderDate.visibility = View.VISIBLE
                 }
             }
         }

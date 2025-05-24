@@ -43,13 +43,16 @@ class LoginActivity : AppCompatActivity() {
 
         // Khởi tạo Firebase Auth
         auth = Firebase.auth
+
         // Khởi tạo Firebase Database
         database = Firebase.database.reference
+
         // Cấu hình Google Sign-In Options
         val googleSignInOptions = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
+
         // Khởi tạo GoogleSignInClient
         googleSignInClient = GoogleSignIn.getClient(this, googleSignInOptions)
 
@@ -65,6 +68,7 @@ class LoginActivity : AppCompatActivity() {
                 Toast.makeText(this, "Đăng nhập thành công", Toast.LENGTH_SHORT).show()
             }
         }
+
         binding.signTV.setOnClickListener {
             val intent = Intent(this, SignActivity::class.java)
             startActivity(intent)

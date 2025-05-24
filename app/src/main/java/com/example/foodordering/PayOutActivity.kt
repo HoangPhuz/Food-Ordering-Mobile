@@ -81,7 +81,8 @@ class PayOutActivity : AppCompatActivity() {
         for (i in 0 until foodItemPrice.size) {
             var price = foodItemPrice[i]
             val lastVND = price.substring(price.length - 4)
-            val priceIntValue = if (lastVND == " VNĐ") {
+            val priceIntValue =
+                if (lastVND == " VNĐ") {
                 price.substring(0, price.length - 4).toInt()
             }
             else {
@@ -143,7 +144,6 @@ class PayOutActivity : AppCompatActivity() {
 
             })
         }
-        val name = intent.getStringExtra("name")
     }
 
 

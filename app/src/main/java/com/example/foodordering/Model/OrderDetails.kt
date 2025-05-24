@@ -20,11 +20,10 @@ data class OrderDetails(
     var paymentReceived: Boolean = false,
     var itemPushKey: String? = null,
     var currentTime: Long = 0,
-    var orderDispatched: Boolean = false // TRƯỜNG MỚI THỰC SỰ
+    var orderDispatched: Boolean = false
 ) : Serializable, Parcelable {
 
-    // Constructor không tham số cho Firebase (data class tự tạo nếu tất cả thuộc tính có giá trị mặc định,
-    // nhưng để rõ ràng và nếu có logic phức tạp hơn, bạn có thể định nghĩa tường minh)
+
     constructor() : this(
         null, null, null, null, null, null, null, null, null,
         false, false, null, 0L, false
@@ -42,11 +41,7 @@ data class OrderDetails(
                     add(parcel.readInt())
                 }
             } else {
-                // Nếu size là -1, danh sách là null, nhưng vì foodQuantities là MutableList<Int>?
-                // và chúng ta đã khởi tạo nó trong this(), chúng ta có thể để nó là emptyList()
-                // hoặc xử lý null nếu logic của bạn cho phép foodQuantities là null hoàn toàn.
-                // Để đơn giản, nếu size là -1, ta sẽ không thêm gì, nó sẽ là empty list.
-                // Nếu bạn muốn nó thực sự là null, bạn cần thay đổi logic khởi tạo.
+
             }
         },
         parcel.createStringArrayList(),
@@ -58,7 +53,7 @@ data class OrderDetails(
         parcel.readByte() != 0.toByte(),
         parcel.readString(),
         parcel.readLong(),
-        parcel.readByte() != 0.toByte() // Đọc orderDispatched
+        parcel.readByte() != 0.toByte()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -73,7 +68,7 @@ data class OrderDetails(
                 parcel.writeInt(quantity)
             }
         } else {
-            parcel.writeInt(-1) // Đánh dấu là null hoặc empty
+            parcel.writeInt(-1)
         }
 
         parcel.writeStringList(foodPrices)
@@ -85,7 +80,7 @@ data class OrderDetails(
         parcel.writeByte(if (paymentReceived) 1 else 0)
         parcel.writeString(itemPushKey)
         parcel.writeLong(currentTime)
-        parcel.writeByte(if (orderDispatched) 1 else 0) // Ghi orderDispatched
+        parcel.writeByte(if (orderDispatched) 1 else 0)
     }
 
     override fun describeContents(): Int {

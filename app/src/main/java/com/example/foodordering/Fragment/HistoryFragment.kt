@@ -8,11 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-// import androidx.fragment.app.viewModels // Nếu dùng ViewModel
-// import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.foodordering.Adapter.PendingOrderAdapter
-import com.example.foodordering.Adapter.PreviousOrderAdapter // Đảm bảo import đúng
+import com.example.foodordering.Adapter.PreviousOrderAdapter
 import com.example.foodordering.Model.CartItems
 import com.example.foodordering.Model.OrderDetails
 import com.example.foodordering.R
@@ -34,7 +32,7 @@ class HistoryFragment : Fragment(), PendingOrderAdapter.OnItemInteractionListene
 
     private lateinit var pendingOrderAdapter: PendingOrderAdapter
     private lateinit var previousOrderAdapter: PreviousOrderAdapter
-    // Không cần previousOrderList như một trường của Fragment nữa nếu PreviousOrderAdapter là ListAdapter
+
 
     private lateinit var buyHistoryRef: DatabaseReference
     private var buyHistoryListener: ValueEventListener? = null
@@ -63,21 +61,18 @@ class HistoryFragment : Fragment(), PendingOrderAdapter.OnItemInteractionListene
 
     private fun setupRecyclerViews() {
         pendingOrderAdapter = PendingOrderAdapter(requireContext(), this)
-        binding.pendingOrdersRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = pendingOrderAdapter
-        }
+        binding.pendingOrdersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.pendingOrdersRecyclerView.adapter = pendingOrderAdapter
 
-        // Khởi tạo PreviousOrderAdapter (không cần truyền list ban đầu)
+
         previousOrderAdapter = PreviousOrderAdapter(requireContext(), this)
-        binding.previousOrdersRecyclerView.apply {
-            layoutManager = LinearLayoutManager(requireContext())
-            adapter = previousOrderAdapter
-        }
+        binding.previousOrdersRecyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.pendingOrdersRecyclerView.adapter = previousOrderAdapter
+
     }
 
     private fun retrieveOrderHistory() {
-        if (buyHistoryListener != null && ::buyHistoryRef.isInitialized) { // Kiểm tra buyHistoryRef đã init chưa
+        if (buyHistoryListener != null && ::buyHistoryRef.isInitialized) {
             buyHistoryRef.removeEventListener(buyHistoryListener!!)
         }
 
@@ -104,7 +99,7 @@ class HistoryFragment : Fragment(), PendingOrderAdapter.OnItemInteractionListene
                 }
 
                 pendingOrderAdapter.submitList(currentPendingOrders)
-                previousOrderAdapter.submitList(currentPreviousOrders) // Sử dụng submitList
+                previousOrderAdapter.submitList(currentPreviousOrders)
                 updateEmptyStateViews(currentPendingOrders, currentPreviousOrders)
             }
 
@@ -114,7 +109,7 @@ class HistoryFragment : Fragment(), PendingOrderAdapter.OnItemInteractionListene
                 updateEmptyStateViews(emptyList(), emptyList())
             }
         }
-        if (::buyHistoryRef.isInitialized) { // Chỉ add listener nếu buyHistoryRef đã được init
+        if (::buyHistoryRef.isInitialized) {
             buyHistoryRef.addValueEventListener(buyHistoryListener!!)
         }
     }
@@ -128,7 +123,7 @@ class HistoryFragment : Fragment(), PendingOrderAdapter.OnItemInteractionListene
     }
 
 
-    override fun onReceivedButtonClicked(orderDetails: OrderDetails, position: Int) { // position không còn cần thiết nếu dùng ListAdapter và lấy item qua object
+    override fun onReceivedButtonClicked(orderDetails: OrderDetails, position: Int) {
         if (userId.isEmpty() || orderDetails.itemPushKey.isNullOrEmpty()) {
             Toast.makeText(context, "Lỗi thông tin đơn hàng hoặc người dùng.", Toast.LENGTH_SHORT).show()
             return
@@ -165,7 +160,7 @@ class HistoryFragment : Fragment(), PendingOrderAdapter.OnItemInteractionListene
         startActivity(intent)
     }
 
-    override fun onBuyAgainClicked(orderDetails: OrderDetails) { // Không cần position nữa
+    override fun onBuyAgainClicked(orderDetails: OrderDetails) {
         Log.d("HistoryFragment", "Đặt lại đơn hàng với pushKey: ${orderDetails.itemPushKey}")
 
         val currentUserId = auth.currentUser?.uid
